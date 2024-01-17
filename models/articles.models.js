@@ -15,24 +15,12 @@ exports.fetchArticleById = async (id) => {
 };
 
 exports.fetchArticlesData = async (sort_by = 'created_at') => {
-  const articlesData = await db.query(
-    `SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles ORDER BY ${sort_by} DESC`
+  let articlesData = await db.query(
+    `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles
+    LEFT JOIN comments on articles.article_id = comments.article_id
+    GROUP BY articles.article_id
+    ORDER BY ${sort_by} DESC;`
   );
-
-  const commentsData = await db.query(`SELECT article_id FROM comments`);
-  const idCount = {};
-
-  commentsData.rows.forEach((comment) => {
-    idCount[comment.article_id] = 0;
-  });
-  commentsData.rows.forEach((comment) => {
-    idCount[comment.article_id]++;
-  });
-
-  articlesData.rows.forEach((article) => {
-    article.comment_count = idCount[article.article_id];
-    if (!article.comment_count) article.comment_count = 0;
-  });
 
   return articlesData.rows;
 };
