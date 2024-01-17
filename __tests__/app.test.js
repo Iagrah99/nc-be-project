@@ -129,6 +129,15 @@ describe('/api/articles/:article_id/comments', () => {
       });
   });
 
+  test('status 200: responds with an empty array if passed an article id that exists, but has no comments associated with it', () => {
+    return request(app)
+      .get('/api/articles/2/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual([]);
+      });
+  });
+
   test('status 404: responds with a Not found error when given a valid article id which does not exist', () => {
     return request(app)
       .get('/api/articles/100/comments')
