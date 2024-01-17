@@ -10,5 +10,6 @@ exports.fetchCommentsByArticleId = async (id, sort_by = 'created_at') => {
     return Promise.reject({ status: 404, msg: 'Not found' });
   }
 
+  console.log(comments.rows[0]);
   return comments.rows;
 };
