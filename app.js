@@ -10,6 +10,7 @@ const {
 const {
   getArticleById,
   getArticles,
+  updateArticleById,
 } = require('./controllers/articles.controllers');
 const {
   getCommentsByArticleId,
@@ -27,6 +28,7 @@ app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 
 app.post('/api/articles/:article_id/comments', addCommentByArticleId);
+app.patch('/api/articles/:article_id', updateArticleById);
 
 app.all('*', notFoundError);
 app.use(customError);
