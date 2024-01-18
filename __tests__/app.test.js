@@ -279,7 +279,6 @@ describe('PATCH /api/articles/:article_id', () => {
       .send({})
       .expect(200)
       .then(({ body }) => {
-        console.log(body.article);
         expect(body.article.votes).toBe(100);
       });
   });
