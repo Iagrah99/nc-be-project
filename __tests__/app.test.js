@@ -168,12 +168,12 @@ describe('POST /api/articles/:article_id/comments', () => {
       .expect(201)
       .then(({ body }) => {
         expect(body).toMatchObject({
+          author: 'icellusedkars',
+          body: "I can't think of a good comment",
+          article_id: 1,
           comment_id: expect.any(Number),
           votes: expect.any(Number),
           created_at: expect.any(String),
-          author: expect.any(String),
-          body: expect.any(String),
-          article_id: expect.any(Number),
         });
       });
   });
