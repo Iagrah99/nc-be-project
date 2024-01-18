@@ -156,3 +156,76 @@ describe('/api/articles/:article_id/comments', () => {
       });
   });
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+  test('status 201: responds with the newly added article', () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send({
+        username: 'icellusedkars',
+        body: "I can't think of a good comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number),
+        });
+      });
+  });
+
+  test('status 404: responds with a Not found error when given a non-existent username', () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send({
+        username: 'unknown_user',
+        body: 'This is my comment',
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+  });
+
+  test('status 404: responds with a Not found error when given a non-existent article id', () => {
+    return request(app)
+      .post('/api/articles/100/comments')
+      .send({
+        username: 'icellusedkars',
+        body: 'This is a my comment',
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+  });
+
+  test('status 400: responds with a Bad request error when the comment does not have a body key', () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send({
+        username: 'icellusedkars',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+
+  test('status 400: responds with a Bad request error when given an invalid article id', () => {
+    return request(app)
+      .post('/api/articles/never_an_id/comments')
+      .send({
+        username: 'icellusedkars',
+        body: 'This is my comment',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});
