@@ -13,3 +13,8 @@ exports.psqlError = (err, req, res, next) => {
     res.status(400).send({ msg: 'Bad request' });
   } else next(err);
 };
+
+exports.internalServerError = (err, req, res, next) => {
+  console.log(err, '<<< Last resort error handler');
+  res.status(500).send({ msg: 'Internal server error' });
+};
