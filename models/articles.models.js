@@ -26,10 +26,8 @@ exports.fetchArticlesData = async (sort_by = 'created_at') => {
   return articlesData.rows;
 };
 
-exports.patchArticleById = async (article_id, inc_votes) => {
-  await checkIdExists(article_id);
-
-  if (!inc_votes) {
+exports.patchArticleById = async (article_id, inc_votes = 0) => {
+  if (typeof inc_votes !== 'number') {
     return Promise.reject({ status: 400, msg: 'Bad request' });
   }
 
@@ -37,6 +35,10 @@ exports.patchArticleById = async (article_id, inc_votes) => {
     `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
     [inc_votes, article_id]
   );
+
+  if (!updatedArticleQuery.rows[0]) {
+    return Promise.reject({ status: 404, msg: 'Not found' });
+  }
 
   return updatedArticleQuery.rows[0];
 };
