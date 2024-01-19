@@ -333,7 +333,6 @@ describe('DELETE /api/comments/:comment_id', () => {
       .delete('/api/comments/75')
       .expect(404)
       .then(({ body }) => {
-        console.log(body.msg);
         expect(body.msg).toBe('Not found');
       });
   });
@@ -343,7 +342,6 @@ describe('DELETE /api/comments/:comment_id', () => {
       .delete('/api/comments/never_an_id')
       .expect(400)
       .then(({ body }) => {
-        console.log(body.msg);
         expect(body.msg).toBe('Bad request');
       });
   });
