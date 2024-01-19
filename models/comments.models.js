@@ -34,3 +34,17 @@ exports.insertCommentByArticleId = async (username, body, article_id) => {
 
   return insertCommentQuery.rows[0];
 };
+
+exports.deleteCommentById = async (comment_id) => {
+  const deleteCommentQuery = await db.query(
+    `DELETE FROM comments WHERE comment_id = $1 RETURNING *;
+  `,
+    [comment_id]
+  );
+
+  if (!deleteCommentQuery.rowCount) {
+    return Promise.reject({ status: 404, msg: 'Not found' });
+  }
+
+  return;
+};
