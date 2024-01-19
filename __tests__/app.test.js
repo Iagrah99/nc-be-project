@@ -320,12 +320,7 @@ describe('PATCH /api/articles/:article_id', () => {
 
 describe('DELETE /api/comments/:comment_id', () => {
   test('status 204: responds with no content', () => {
-    return request(app)
-      .delete('/api/comments/1')
-      .expect(204)
-      .then(({ body }) => {
-        expect(body).toEqual({});
-      });
+    return request(app).delete('/api/comments/1').expect(204);
   });
 
   test('status 404: responds with a Not found error when given a valid but non-existent comment_id ', () => {
