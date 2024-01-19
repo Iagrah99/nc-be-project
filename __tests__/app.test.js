@@ -317,3 +317,34 @@ describe('PATCH /api/articles/:article_id', () => {
       });
   });
 });
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('status 204: responds with no content', () => {
+    return request(app)
+      .delete('/api/comments/1')
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+
+  test('status 404: responds with a Not found error when given a valid but non-existent comment_id ', () => {
+    return request(app)
+      .delete('/api/comments/75')
+      .expect(404)
+      .then(({ body }) => {
+        console.log(body.msg);
+        expect(body.msg).toBe('Not found');
+      });
+  });
+
+  test('status 400: responds with a Bad request error when given an invalid comment_id ', () => {
+    return request(app)
+      .delete('/api/comments/never_an_id')
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body.msg);
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});
