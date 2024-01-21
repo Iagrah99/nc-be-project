@@ -1,5 +1,5 @@
 const db = require('../db/connection');
-const { checkIdExists } = require('../utils/checkIdExists');
+const { fetchTopicsData } = require('./topics.models');
 
 exports.fetchArticleById = async (id) => {
   const articles = await db.query(
@@ -15,13 +15,29 @@ exports.fetchArticleById = async (id) => {
   return article;
 };
 
-exports.fetchArticlesData = async (sort_by = 'created_at') => {
-  const articlesData = await db.query(
-    `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles
-    LEFT JOIN comments on articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY ${sort_by} DESC;`
-  );
+exports.fetchArticlesData = async (request, sort_by = 'created_at') => {
+  let query = `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles
+  LEFT JOIN comments on articles.article_id = comments.article_id`;
+
+  const queryParameters = [];
+  const validTopics = (await fetchTopicsData()).map((topic) => {
+    return topic.slug;
+  });
+
+  if (request.query.topic) {
+    const topicExists = validTopics.includes(request.query.topic);
+    if (topicExists) {
+      query += ` WHERE topic = $1`;
+      queryParameters.push(request.query.topic);
+    } else {
+      return Promise.reject({ status: 404, msg: 'Topic not found' });
+    }
+  }
+
+  query += ` GROUP BY articles.article_id
+    ORDER BY ${sort_by} DESC;`;
+
+  const articlesData = await db.query(query, queryParameters);
 
   return articlesData.rows;
 };
