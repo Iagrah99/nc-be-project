@@ -86,11 +86,11 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(13);
-        expect(body).toBeSortedBy('created_at', {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('created_at', {
           descending: true,
         });
-        body.forEach((article) => {
+        body.articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
             title: expect.any(String),
@@ -356,6 +356,46 @@ describe('GET /api/users', () => {
             avatar_url: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe('GET /api/articles?topic_query', () => {
+  test('status 200: responds with the articles filtered by topic', () => {
+    return request(app)
+      .get('/api/articles?topic=mitch')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(12);
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: 'mitch',
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test('status 200: responds with an empty array if topic exists but has no articles', () => {
+    return request(app)
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+
+  test('status 404: responds with a Not found error when given a valid but non-existent topic query ', () => {
+    return request(app)
+      .get('/api/articles?topic=invalid')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Topic not found');
       });
   });
 });
