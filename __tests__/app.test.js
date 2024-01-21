@@ -49,7 +49,7 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/1')
       .expect(200)
       .then(({ body }) => {
-        expect(body).toMatchObject({
+        expect(body.article).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
           topic: expect.any(String),
@@ -59,6 +59,14 @@ describe('GET /api/articles/:article_id', () => {
           votes: expect.any(Number),
           article_img_url: expect.any(String),
         });
+      });
+  });
+  test('status 200: responds with an article object containing the comment_count property', () => {
+    return request(app)
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty('comment_count');
       });
   });
   test('status 404: responds with a Not found error when given a valid article id which does not exist', () => {
