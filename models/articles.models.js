@@ -3,7 +3,10 @@ const { fetchTopicsData } = require('./topics.models');
 
 exports.fetchArticleById = async (id) => {
   const articles = await db.query(
-    `SELECT * FROM articles WHERE article_id = $1`,
+    `SELECT articles.article_id, title, topic, articles.body, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles
+    LEFT JOIN comments on articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id`,
     [id]
   );
   const article = articles.rows[0];
