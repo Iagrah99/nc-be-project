@@ -1,5 +1,7 @@
 # Northcoders News API
 
+Link to the live version: https://nc-news-project-imqq.onrender.com/api
+
 ## How to successfully connect two databases together
 
 The file you will need is:
