@@ -19,8 +19,8 @@ This version can be found <a href="https://nc-news-project-imqq.onrender.com/api
 ### Minimum Installation Requirements
 
 <ul>
-  <li><a href="https://nodejs.org/en">Node.js</a> - Version v21.2.0</li>
-  <li><a href="https://www.postgresql.org/">PostgreSQL</a> - Version 14.9</li>
+  <li><a href="https://nodejs.org/en" target="_blank">Node.js</a> - Version v21.2.0</li>
+  <li><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> - Version 14.9</li>
 </ul>
 
 ### Installation Walkthrough
@@ -67,31 +67,59 @@ Run the check version command for PostgreSQL
 ```
   npm install
 ```
+**Note that this may take a couple of minutes, depending on how fast your computer is.**
 </p>
 
 </li>
   
 </ol>
 
-## How to successfully connect two databases together
+## How To Get Started Running The Project
 
-The file you will need is:
+### Create The Environment Varibles
 
-1. `connection.js`
-
-This will either point towards the test database, or the live development database. This depends on which `.env` file is being referred to by `procces.env`.
-
-## How to create the environment variables
-
-If you are cloning this project, you will need the following files: 
+Once you have successfully followed the installation steps, you will need to create the following files yourself inside of the root folder: 
 
 `.env.test` and `.env.development`
 
-Inside of both of these you will have to specify which database you want to refer to. Inside the `.env.test` file you will need the following:
+Inside both of these files you will have to specify which database you want to connect to. Inside the `.env.test` file you will need to write the following code:
 
-`PGDATABASE=nc_news_test;`
+```
+PGDATABASE=nc_news_test
+```
 
-Inside the `.env.development` file you will need:
+Inside the `.env.development` file you will need to write:
 
-`PGDATABASE=nc_news;`
+```
+PGDATABASE=nc_news
+```
 
+Ensure that the names of both files are present inside of your `.gitignore` file. If it's not already there, you can simply write `.env.*` on a new line and it will target both `.env` files.
+
+### Seeding The Database
+
+Before you are able to use or test the application, you will need to set up the database and seed it with the data. In the terminal, enter the following commands: 
+
+```
+npm run setup-dbs
+```
+
+```
+npm npm run seed
+```
+Both of these commands reference NPM scripts found within the `package.json` file. Now you should be good to go either running or testing the API.
+Note that the database will be automatically reseeded prior to each test, so you will not need to run these commands again.
+
+### API Testing
+
+To run a test, type in the following command: 
+```
+npm test
+```
+This will run every test including those from `utils.test.js`. To specifically test our server endpoints, append the `app.test.js` file name to the `npm test` command.
+To run specific test suites, prefix them with `.only`, for example:
+```
+describe.only() => {
+...
+}
+```
