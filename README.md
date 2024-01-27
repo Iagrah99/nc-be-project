@@ -76,7 +76,7 @@ Run the check version command for PostgreSQL
 
 ## How To Get Started Running The Project
 
-### Create The Environment Varibles
+### Create The Environment Variables
 
 Once you have successfully followed the installation steps, you will need to create the following files yourself inside of the root folder: 
 
@@ -124,3 +124,5 @@ describe.only() => {
 }
 ```
 If you wish to see a full list of all the endpoints, checkout the `endpoints.json` file.
+
+Thanks for checking out my project! 
