@@ -123,3 +123,4 @@ describe.only() => {
 ...
 }
 ```
+If you wish to see a full list of all the endpoints, checkout the `endpoints.json` file.
