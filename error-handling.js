@@ -1,8 +1,5 @@
-exports.notFoundError = (req, res) => {
-  res.status(404).send({ msg: 'Endpoint not found' });
-};
 exports.customError = (err, req, res, next) => {
-  if (err.status) {
+  if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
@@ -17,4 +14,8 @@ exports.psqlError = (err, req, res, next) => {
 exports.internalServerError = (err, req, res, next) => {
   // console.log(err, '<<< error handler 500');
   res.status(500).send({ msg: 'Internal server error' });
+};
+
+exports.notFoundError = (req, res) => {
+  res.status(404).send({ msg: 'Endpoint not found' });
 };

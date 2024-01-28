@@ -18,11 +18,36 @@ exports.fetchArticleById = async (id) => {
   return article;
 };
 
-exports.fetchArticlesData = async (request, sort_by = 'created_at') => {
-  let query = `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles
-  LEFT JOIN comments on articles.article_id = comments.article_id`;
+exports.fetchArticlesData = async (
+  request,
+  sort_by = 'created_at',
+  order_by = 'DESC'
+) => {
+  let query = `SELECT
+                articles.article_id,
+                title,
+                topic,
+                articles.author,
+                articles.created_at,
+                articles.votes,
+                articles.article_img_url,
+                COUNT(comments.article_id)::INT AS comment_count
+              FROM articles
+                LEFT JOIN comments
+                on articles.article_id = comments.article_id`;
 
   const queryParameters = [];
+  const validSortByQueries = [
+    'article_id',
+    'title',
+    'topic',
+    'author',
+    'votes',
+    'article_img_url',
+    'comment_count',
+  ];
+  const validOrderByQueries = ['desc', 'asc'];
+
   const validTopics = (await fetchTopicsData()).map((topic) => {
     return topic.slug;
   });
@@ -37,8 +62,27 @@ exports.fetchArticlesData = async (request, sort_by = 'created_at') => {
     }
   }
 
-  query += ` GROUP BY articles.article_id
-    ORDER BY ${sort_by} DESC;`;
+  if (request.query.sort_by) {
+    const queryIsValid = validSortByQueries.includes(request.query.sort_by);
+    if (queryIsValid) {
+      sort_by = request.query.sort_by;
+    } else {
+      return Promise.reject({ status: 400, msg: 'Invalid sort by query' });
+    }
+  }
+
+  query += ` GROUP BY articles.article_id`;
+
+  if (request.query.order_by) {
+    const orderByIsValid = validOrderByQueries.includes(request.query.order_by);
+    if (orderByIsValid) {
+      order_by = request.query.order_by;
+    } else {
+      return Promise.reject({ status: 400, msg: 'Invalid order by query' });
+    }
+  }
+
+  query += ` ORDER BY ${sort_by} ${order_by.toUpperCase()};`;
 
   const articlesData = await db.query(query, queryParameters);
 

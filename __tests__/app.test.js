@@ -407,3 +407,191 @@ describe('GET /api/articles?topic_query', () => {
       });
   });
 });
+
+describe('GET /api/articles (sorting queries)', () => {
+  test('status 200: returns the articles sorted by the article_id and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('article_id', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the article_id when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('article_id', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the title and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=title&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('title', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the title when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=title')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('title', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the topic and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=topic&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('topic', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the topic when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=topic')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('topic', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the author and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=author&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('author', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the author when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=author')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('author', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the votes and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=votes&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('votes', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the votes when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=votes')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('votes', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the article_img_url and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_img_url&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('article_img_url', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the article_img_url when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_img_url')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('article_img_url', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the comment_count and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=comment_count&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('comment_count', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the comment_count when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=comment_count')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('comment_count', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 400: responds with an Invalid sort by query error when given an invalid sort_by query ', () => {
+    return request(app)
+      .get('/api/articles?sort_by=nonsense')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid sort by query');
+      });
+  });
+
+  test('status 400: responds with an Invalid order by query error when given an invalid order_by query ', () => {
+    return request(app)
+      .get('/api/articles?order_by=nothing')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid order by query');
+      });
+  });
+});
