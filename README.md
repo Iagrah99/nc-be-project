@@ -25,54 +25,46 @@ This version can be found <a href="https://nc-news-project-imqq.onrender.com/api
 
 ### Installation Walkthrough
 
-<ol>
-<li> Start by forking the project repository, and open up a terminal. Then do the following steps:
-<p>
-Clone the repository to your local machine
+1. Start by forking the project repository, and open up a terminal. Then do the following steps:
+
+    1A. Clone the repository to your local machine
+
+    ```bash
+    git clone https://github.com/Iagrah99/nc-be-project
+    ```
+
+    2B. Change from the current directory into the project folder
+
+    ```bash
+    cd nc-be-project
+    ```
+
+    3C. Open up the folder in VS Code
+
+    ```bash
+    code .
+    ```
+
+2. Now let's verify you have both Node & PostgreSQL installed. Inside VSCode open a terminal window <kbd>CTRL/CMD SHIFT `</kbd>. Then do the following steps:
+
+    2A. Run the check version command for Node
+    
+    ```
+      node --version
+    ```
+    
+    2B. Run the check version command for PostgreSQL
+    
+    ```
+      psql --version
+    ```
+    
+    2C.  Once both versions are verified, we can install our dependencies by running the following Node Package Manager (NPM) command: 
   
- ```
-   git clone https://github.com/Iagrah99/nc-be-project
- ```
-Change from the current directory into the project folder
-
- ```
-   cd nc-be-project
- ```
-Open up the folder in VS Code
-
- ```
-   code .
- ```
-</p>
-</li>
-
-<li> Now let's verify you have both Node & PostgreSQL installed. Inside VSCode open a terminal window <kbd>CTRL/CMD SHIFT `</kbd>. Then do the following steps:
-<p>
-Run the check version command for Node
-
-```
-  node --version
-```
-Run the check version command for PostgreSQL
-```
-  psql --version
-```
-</p>
-  
-</li> 
-
-<li> Once both versions are verified, we can install our dependencies by running the following Node Package Manager (NPM) command: 
-<p>
-  
-```
-  npm install
-```
-**Note that this may take a couple of minutes, depending on how fast your computer is.**
-</p>
-
-</li>
-  
-</ol>
+    ```
+      npm install
+    ```
+    **Note that this may take a couple of minutes, depending on how fast your computer is.**
 
 ## How To Get Started Running The Project
 
