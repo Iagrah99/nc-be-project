@@ -55,7 +55,7 @@ Run the check version command for Node
 ```
 Run the check version command for PostgreSQL
 ```
-  postgres --version
+  psql --version
 ```
 </p>
   
