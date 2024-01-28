@@ -105,7 +105,7 @@ npm run setup-dbs
 ```
 
 ```
-npm npm run seed
+npm run seed
 ```
 Both of these commands reference NPM scripts found within the `package.json` file. Now you should be good to go either running or testing the API.
 Note that the database will be automatically reseeded prior to each test, so you will not need to run these commands again.
