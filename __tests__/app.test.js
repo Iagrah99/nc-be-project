@@ -577,6 +577,30 @@ describe('GET /api/articles (sorting queries)', () => {
       });
   });
 
+  test('status 200: returns the articles sorted by the created_at when specified, and in descending order by default', () => {
+    return request(app)
+      .get('/api/articles?sort_by=created_at')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('created_at', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: returns the articles sorted by the created_at when specified, and in ascending order when both are specified', () => {
+    return request(app)
+      .get('/api/articles?sort_by=created_at&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy('created_at', {
+          ascending: true,
+        });
+      });
+  });
+
   test('status 400: responds with an Invalid sort by query error when given an invalid sort_by query ', () => {
     return request(app)
       .get('/api/articles?sort_by=nonsense')

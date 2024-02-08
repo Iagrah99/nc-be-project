@@ -45,6 +45,7 @@ exports.fetchArticlesData = async (
     'votes',
     'article_img_url',
     'comment_count',
+    'created_at',
   ];
   const validOrderByQueries = ['desc', 'asc'];
 
