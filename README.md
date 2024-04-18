@@ -4,7 +4,7 @@
 
 Welcome to my Northcoders News API Backend Project! The project was written in JavaScript and uses the Express framework, along with PostgreSQL for the Database, tested using Jest (a framework for testing JavaScript code) with a jest library called Supertest (used for testing HTTP servers), and additional development tools such as Husky, Nodemon & PGformat.
 
-The project itself is a restful API which provides the backend for my frontend NC News Web App project which is built using React (a library for building Web user interface). Using this API, users will be able to view, create, delete articles & comments, filter those articles and comments using SQL queries, and more!
+The project itself is a restful API which provides the backend for my frontend NC News Web App project which is built using React (a library for building Web user interfaces). Using this API, users will be able to view, create, delete articles & comments, filter those articles and comments using SQL queries, and more!
 
 ## Hosted Live Version
 
