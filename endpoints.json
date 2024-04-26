@@ -1,19 +1,40 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "responds with a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "responds with an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        {
+          "slug": "football",
+          "description": "Footie!"
+        }
+      ]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order_by"],
-    "sort_by_values": ["article_id", "title", "topic", "author", "votes", "article_img_url", "comment_count"],
-    "order_by_values": ["asc", "desc (default)"],
+    "description": "responds with an array of all articles. Valid sort_by queries: created_at (default), comment_count or votes. Valid group_by queries: asc, desc (default). Topic queries filter the articles by a specified topic.",
+    "queries": [
+      "author",
+      "topic",
+      "sort_by",
+      "order_by"
+    ],
+    "sort_by_values": [
+      "article_id",
+      "title",
+      "topic",
+      "author",
+      "votes",
+      "article_img_url",
+      "comment_count"
+    ],
+    "order_by_values": [
+      "asc",
+      "desc (default)"
+    ],
     "exampleResponse": {
       "articles": [
         {
@@ -29,34 +50,71 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "responds with an article by its id",
+    "description": "responds with an array of all the articles which have the specified article_id",
     "queries": [],
     "exampleResponse": {
-        "article_id": "1",
-        "title": "Living in the shadow of a great man",
-        "topic": "mitch",
-        "author": "butter_bridge",
-        "body": "I find this existence challenging",
-        "created_at": "2020-07-09T20:11:00.000Z",
-        "votes": 100,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      "article_id": "1",
+      "title": "Living in the shadow of a great man",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "created_at": "2020-07-09T20:11:00.000Z",
+      "votes": 100,
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      "comment_count": 11
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "responds with an array of comments for the given article_id",
+    "description": "responds with an array of comments for the specified article_id",
     "queries": [],
     "exampleResponse": {
-      "comment_id": 5,
-      "body": "I hate streaming noses",
-      "article_id": 1,
-      "author": "icellusedkars",
-      "votes": 0,
-      "created_at": "2020-11-03T21:00:00.000Z"
+      "comments": [
+        {
+          "comment_id": 5,
+          "body": "I hate streaming noses",
+          "article_id": 1,
+          "author": "icellusedkars",
+          "votes": 0,
+          "created_at": "2020-11-03T21:00:00.000Z"
+        }
+      ]
     }
   },
-  "PUSH /api/articles/:article_id/comments": {
-    "description": "responds with the newly added article",
+  "GET /api/users": {
+    "description": "responds with an array of all users",
     "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        },
+        {
+          "username": "icellusedkars",
+          "name": "sam",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        },
+        {
+          "username": "rogersop",
+          "name": "paul",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+        },
+        {
+          "username": "lurker",
+          "name": "do_nothing",
+          "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a comment to the article, and responds with the newly created comment",
+    "queries": [],
+    "exampleRequest": {
+      "username": "icellusedkars",
+      "body": "I can't think of a good comment"
+    },
     "exampleResponse": {
       "comment_id": 19,
       "body": "I can't think of a good comment",
@@ -67,8 +125,11 @@
     }
   },
   "PATCH /api/articles/:article_id": {
-    "description": "responds with the updated added article",
+    "description": "Updates the votes of the article with the specified article_id, and responds with the updated article votes. The body of the request should include an inc_votes key with a positive value to increase the number of votes, or a negative value to decrease the number.",
     "queries": [],
+    "exampleRequest": {
+      "inc_votes": -10
+    },
     "exampleResponse": {
       "title": "Living in the shadow of a great man",
       "topic": "mitch",
@@ -76,24 +137,12 @@
       "body": "I find this existence challenging",
       "created_at": 1594329060000,
       "votes": 90,
-      "article_img_url":
-        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     }
   },
   "DELETE /api/comments/:comment_id": {
-    "description": "responds with status 204 and no content",
+    "description": "Deletes the comment with the specified comment_id, and responds with status code of 204 and no content",
     "queries": [],
     "exampleResponse": {}
-  },
-  "GET /api/users": {
-    "description": "responds with an array of all users",
-    "queries": [],
-    "exampleResponse": {
-      "users": [{
-        "username": "butter_bridge",
-        "name": "jonny",
-        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-      }]
-    }
   }
 }
