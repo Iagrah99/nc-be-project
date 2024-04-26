@@ -620,7 +620,7 @@ describe('GET /api/articles (sorting queries)', () => {
   });
 });
 
-describe.only('GET /api/users/:username', () => {
+describe('GET /api/users/:username', () => {
   test('status 200: responds with a user object by the specified username and has the username, avatar_url and name properties. ', () => {
     return request(app)
       .get("/api/users/icellusedkars")
