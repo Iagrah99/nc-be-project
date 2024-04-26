@@ -619,3 +619,28 @@ describe('GET /api/articles (sorting queries)', () => {
       });
   });
 });
+
+describe.only('GET /api/users/:username', () => {
+  test('status 200: responds with a user object by the specified username and has the username, avatar_url and name properties. ', () => {
+    return request(app)
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toMatchObject({
+          username: "icellusedkars",
+          avatar_url: "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+          name: 'sam',
+        });
+      });
+  });
+
+  test('status 404: responds with a Not found error when given a valid but non-existent username', () => {
+    return request(app)
+      .get("/api/users/fakeuser")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found")
+      })
+  })
+});
+
