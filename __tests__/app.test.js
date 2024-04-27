@@ -166,7 +166,7 @@ describe('GET /api/articles/:article_id/comments', () => {
 });
 
 describe('POST /api/articles/:article_id/comments', () => {
-  test('status 201: responds with the newly added article', () => {
+  test('status 201: responds with the newly added article comment', () => {
     return request(app)
       .post('/api/articles/1/comments')
       .send({
@@ -716,6 +716,151 @@ describe('PATCH: /api/comments/:comment_id', () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found")
+      })
+  })
+})
+
+describe('POST: /api/articles', () => {
+  test('status 201: responds with the newly added article post', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 'lurker',
+        title: 'Article Test Title',
+        body: 'Article test body',
+        topic: 'paper',
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 14,
+          author: 'lurker',
+          title: 'Article Test Title',
+          body: 'Article test body',
+          topic: 'paper',
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        })
+      })
+  })
+
+  test('status 201: responds with the newly added article post with a default image if no article_img_url is provided', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 'lurker',
+        title: 'Article Test Title',
+        body: 'Article test body',
+        topic: 'paper',
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 14,
+          author: 'lurker',
+          title: 'Article Test Title',
+          body: 'Article test body',
+          topic: 'paper',
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+          article_img_url: 'https://source.unsplash.com/700x700',
+        })
+      })
+  })
+
+  test('status 400: responds with a Bad request error when given an author who does not exist', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 'unknown',
+        title: 'Article Test Title',
+        body: 'Article test body',
+        topic: 'paper',
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request")
+      })
+  })
+
+  test('status 400: responds with a Bad request error when given no author key in the request body', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        title: 'Article Test Title',
+        body: 'Article test body',
+        topic: 'paper',
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request")
+      })
+  })
+
+  test('status 400: responds with a Bad request error when given no title key in the request body', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 'lurker',
+        body: 'Article test body',
+        topic: 'paper',
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request")
+      })
+  })
+
+  test('status 400: responds with a Bad request error when given no body key in the request body', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 'lurker',
+        title: 'Article Test Title',
+        topic: 'paper',
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request")
+      })
+  })
+
+  test('status 400: responds with a Bad request error when given no topic key in the request body', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 'lurker',
+        title: 'Article Test Title',
+        body: 'Article test body',
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request")
+      })
+  })
+
+  test('status 400: responds with a Bad request error when given a topic that does not exist', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 'lurker',
+        title: 'Article Test Title',
+        body: 'Article test body',
+        topic: "gaming",
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request")
       })
   })
 })
