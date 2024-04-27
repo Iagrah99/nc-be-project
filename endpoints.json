@@ -159,5 +159,29 @@
       "article_id": 1,
       "created_at": 1604113380000
     }
+  },
+  "POST /api/articles": {
+    "description": "responds with the newly added article post",
+    "queries": [],
+    "exampleRequest": {
+      "author": "lurker",
+      "title": "Article Test Title",
+      "body": "Article test body",
+      "topic": "paper",
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 38,
+        "title": "Article Test Title",
+        "topic": "coding",
+        "body": "Article test body",
+        "author": "grumpy19",
+        "created_at": "2024-04-27T17:52:29.349Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 0
+      }
+    }
   }
 }

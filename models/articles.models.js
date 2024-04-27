@@ -106,3 +106,33 @@ exports.patchArticleById = async (article_id, inc_votes = 0) => {
 
   return updatedArticleQuery.rows[0];
 };
+
+exports.postArticle = async (author, title, body, topic, article_img_url = "https://source.unsplash.com/700x700") => {
+  const userExistsQuery = await db.query(
+    `SELECT * FROM users WHERE username = $1`,
+    [author]
+  );
+
+  const validTopics = (await fetchTopicsData()).map((topic) => {
+    return topic.slug;
+  });
+
+  if (!author || !title || !body || !topic || !userExistsQuery.rows.length || !validTopics.includes(topic)) {
+    return Promise.reject({ status: 400, msg: 'Bad request' });
+  }
+
+  const insertArticleQuery = await db.query(`
+    INSERT INTO articles 
+      (author, title, body, topic, article_img_url)
+    VALUES
+      ($1, $2, $3, $4, $5)
+    RETURNING *;`,
+    [author, title, body, topic, article_img_url]
+  );
+
+  const newArticleId = insertArticleQuery.rows[0].article_id
+
+  const newArticle = await this.fetchArticleById(newArticleId)
+
+  return newArticle;
+}

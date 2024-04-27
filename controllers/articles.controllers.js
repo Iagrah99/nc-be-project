@@ -2,6 +2,7 @@ const {
   fetchArticleById,
   fetchArticlesData,
   patchArticleById,
+  postArticle,
 } = require('../models/articles.models');
 
 exports.getArticleById = async (req, res, next) => {
@@ -33,3 +34,14 @@ exports.updateArticleById = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.addArticles = async (req, res, next) => {
+  try {
+    const { author, title, body, topic, article_img_url } = req.body;
+    const addedArticle = await postArticle(author, title, body, topic, article_img_url);
+
+    res.status(201).send({ article: addedArticle });
+  } catch (err) {
+    next(err);
+  }
+}
