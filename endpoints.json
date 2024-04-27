@@ -144,5 +144,20 @@
     "description": "Deletes the comment with the specified comment_id, and responds with status code of 204 and no content",
     "queries": [],
     "exampleResponse": {}
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Updates the votes for either negative or positive values of the comment with the specified comment_id, and responds with the updated comment",
+    "queries": [],
+    "exampleRequest": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "comment_id": 2,
+      "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+      "votes": 15,
+      "author": "butter_bridge",
+      "article_id": 1,
+      "created_at": 1604113380000
+    }
   }
 }
