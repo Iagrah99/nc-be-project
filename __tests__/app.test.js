@@ -644,3 +644,78 @@ describe('GET /api/users/:username', () => {
   })
 });
 
+describe('PATCH: /api/comments/:comment_id', () => {
+  test('status 200: responds with the updated comment specified by its comment_id, and increases the number of votes when given a positive inc_votes value', () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({
+        inc_votes: 1,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 17,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: expect.any(String)
+        })
+      })
+  })
+
+  test('status 200: responds with the updated comment specified by its comment_id, and decreases the number of votes when given a negative inc_votes value', () => {
+    return request(app)
+      .patch('/api/comments/2')
+      .send({
+        inc_votes: -1,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          comment_id: 2,
+          body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+          votes: 13,
+          author: "butter_bridge",
+          article_id: 1,
+          created_at: expect.any(String)
+        })
+      })
+  })
+
+  test('status 400: responds with a Bad request error when given an invalid comment_id', () => {
+    return request(app)
+      .patch("/api/comments/not_an_id")
+      .send({
+        inc_votes: 1,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      })
+  })
+
+  test('status 400: responds with a Bad request error when not given a number value for the inc_votes key', () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({
+        inc_votes: "one",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      })
+  })
+
+  test('status 404: responds with a Not found error when given a valid but non-existent comment_id', () => {
+    return request(app)
+      .patch("/api/comments/100")
+      .send({
+        inc_votes: 1,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found")
+      })
+  })
+})

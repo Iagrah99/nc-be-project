@@ -2,6 +2,7 @@ const {
   fetchCommentsByArticleId,
   insertCommentByArticleId,
   deleteCommentById,
+  patchCommentById,
 } = require('../models/comments.models');
 
 exports.getCommentsByArticleId = async (req, res, next) => {
@@ -32,6 +33,17 @@ exports.removeCommentById = async (req, res, next) => {
     const { comment_id } = req.params;
     await deleteCommentById(comment_id);
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateCommentById = async (req, res, next) => {
+  try {
+    const { comment_id } = req.params;
+    const { inc_votes } = req.body;
+    const updatedComment = await patchCommentById(comment_id, inc_votes);
+    res.status(200).send({ comment: updatedComment });
   } catch (err) {
     next(err);
   }

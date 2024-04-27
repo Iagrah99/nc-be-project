@@ -6,7 +6,6 @@ exports.fetchUsersData = async () => {
 };
 
 exports.fetchUserByUsername = async (username) => {
-  console.log(username)
 
   const userData = await db.query(
     `SELECT * FROM users
