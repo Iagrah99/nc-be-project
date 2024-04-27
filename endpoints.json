@@ -164,10 +164,10 @@
     "description": "responds with the newly added article post",
     "queries": [],
     "exampleRequest": {
-      "author": "lurker",
+      "author": "grumpy19",
       "title": "Article Test Title",
       "body": "Article test body",
-      "topic": "paper",
+      "topic": "coding",
       "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     },
     "exampleResponse": {
