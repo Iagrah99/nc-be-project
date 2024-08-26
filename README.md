@@ -8,7 +8,7 @@ The project itself is a restful API which provides the backend for my frontend N
 
 ## Hosted Live Version
 
-This version is hosted using the cloud application hosting service, <a href="https://render.com/">Render</a> and the database hosting service, <a href="https://supabase.com/">Supabase</a>. 
+This version is hosted using the cloud application hosting service, <a href="https://render.com/" target="_blank">Render</a> and the database hosting service, <a href="https://supabase.com/" target="_blank">Supabase</a>. 
 
 This version can be found <a href="https://nc-news-project-imqq.onrender.com/api" target="_blank">here</a>.
 
