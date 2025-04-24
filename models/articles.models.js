@@ -3,10 +3,12 @@ const { fetchTopicsData } = require('./topics.models');
 
 exports.fetchArticleById = async (id) => {
   const articles = await db.query(
-    `SELECT articles.article_id, title, topic, articles.body, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles
-    LEFT JOIN comments on articles.article_id = comments.article_id
-    WHERE articles.article_id = $1
-    GROUP BY articles.article_id`,
+    `
+      SELECT articles.article_id, title, topic, articles.body, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles
+      LEFT JOIN comments on articles.article_id = comments.article_id
+      WHERE articles.article_id = $1
+      GROUP BY articles.article_id
+    `,
     [id]
   );
   const article = articles.rows[0];
@@ -107,7 +109,13 @@ exports.patchArticleById = async (article_id, inc_votes = 0) => {
   return updatedArticleQuery.rows[0];
 };
 
-exports.postArticle = async (author, title, body, topic, article_img_url = "https://source.unsplash.com/700x700") => {
+exports.postArticle = async (
+  author,
+  title,
+  body,
+  topic,
+  article_img_url = 'https://i.ibb.co/60VdM4xv/Untitled-design.png'
+) => {
   const userExistsQuery = await db.query(
     `SELECT * FROM users WHERE username = $1`,
     [author]
@@ -117,11 +125,19 @@ exports.postArticle = async (author, title, body, topic, article_img_url = "http
     return topic.slug;
   });
 
-  if (!author || !title || !body || !topic || !userExistsQuery.rows.length || !validTopics.includes(topic)) {
+  if (
+    !author ||
+    !title ||
+    !body ||
+    !topic ||
+    !userExistsQuery.rows.length ||
+    !validTopics.includes(topic)
+  ) {
     return Promise.reject({ status: 400, msg: 'Bad request' });
   }
 
-  const insertArticleQuery = await db.query(`
+  const insertArticleQuery = await db.query(
+    `
     INSERT INTO articles 
       (author, title, body, topic, article_img_url)
     VALUES
@@ -130,9 +146,9 @@ exports.postArticle = async (author, title, body, topic, article_img_url = "http
     [author, title, body, topic, article_img_url]
   );
 
-  const newArticleId = insertArticleQuery.rows[0].article_id
+  const newArticleId = insertArticleQuery.rows[0].article_id;
 
-  const newArticle = await this.fetchArticleById(newArticleId)
+  const newArticle = await this.fetchArticleById(newArticleId);
 
   return newArticle;
-}
+};
