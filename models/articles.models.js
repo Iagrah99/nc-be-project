@@ -152,3 +152,24 @@ exports.postArticle = async (
 
   return newArticle;
 };
+
+exports.removeArticleById = async (article_id) => {
+  // First, delete associated comments
+  const deleteCommentsResult = await db.query(
+    `DELETE FROM comments WHERE article_id = $1;`,
+    [article_id]
+  );
+
+  // Then, delete the article
+  const deleteArticleResult = await db.query(
+    `DELETE FROM articles WHERE article_id = $1;`,
+    [article_id]
+  );
+
+  // Check if article was found and deleted
+  if (deleteArticleResult.rowCount === 0) {
+    return Promise.reject({ status: 404, msg: 'Article not found' });
+  }
+
+  return;
+};

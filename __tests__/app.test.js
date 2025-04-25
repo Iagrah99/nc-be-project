@@ -623,12 +623,13 @@ describe('GET /api/articles (sorting queries)', () => {
 describe('GET /api/users/:username', () => {
   test('status 200: responds with a user object by the specified username and has the username, avatar_url and name properties. ', () => {
     return request(app)
-      .get("/api/users/icellusedkars")
+      .get('/api/users/icellusedkars')
       .expect(200)
       .then(({ body }) => {
         expect(body.user).toMatchObject({
-          username: "icellusedkars",
-          avatar_url: "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+          username: 'icellusedkars',
+          avatar_url:
+            'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
           name: 'sam',
         });
       });
@@ -636,12 +637,12 @@ describe('GET /api/users/:username', () => {
 
   test('status 404: responds with a Not found error when given a valid but non-existent username', () => {
     return request(app)
-      .get("/api/users/fakeuser")
+      .get('/api/users/fakeuser')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Not found")
-      })
-  })
+        expect(body.msg).toBe('Not found');
+      });
+  });
 });
 
 describe('PATCH: /api/comments/:comment_id', () => {
@@ -657,12 +658,12 @@ describe('PATCH: /api/comments/:comment_id', () => {
           comment_id: 1,
           body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
           votes: 17,
-          author: "butter_bridge",
+          author: 'butter_bridge',
           article_id: 9,
-          created_at: expect.any(String)
-        })
-      })
-  })
+          created_at: expect.any(String),
+        });
+      });
+  });
 
   test('status 200: responds with the updated comment specified by its comment_id, and decreases the number of votes when given a negative inc_votes value', () => {
     return request(app)
@@ -674,62 +675,63 @@ describe('PATCH: /api/comments/:comment_id', () => {
       .then(({ body }) => {
         expect(body.comment).toMatchObject({
           comment_id: 2,
-          body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+          body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
           votes: 13,
-          author: "butter_bridge",
+          author: 'butter_bridge',
           article_id: 1,
-          created_at: expect.any(String)
-        })
-      })
-  })
+          created_at: expect.any(String),
+        });
+      });
+  });
 
   test('status 400: responds with a Bad request error when given an invalid comment_id', () => {
     return request(app)
-      .patch("/api/comments/not_an_id")
+      .patch('/api/comments/not_an_id')
       .send({
         inc_votes: 1,
       })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Bad request');
-      })
-  })
+      });
+  });
 
   test('status 400: responds with a Bad request error when not given a number value for the inc_votes key', () => {
     return request(app)
-      .patch("/api/comments/1")
+      .patch('/api/comments/1')
       .send({
-        inc_votes: "one",
+        inc_votes: 'one',
       })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Bad request');
-      })
-  })
+      });
+  });
 
   test('status 404: responds with a Not found error when given a valid but non-existent comment_id', () => {
     return request(app)
-      .patch("/api/comments/100")
+      .patch('/api/comments/100')
       .send({
         inc_votes: 1,
       })
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Not found")
-      })
-  })
-})
+        expect(body.msg).toBe('Not found');
+      });
+  });
+});
 
 describe('POST: /api/articles', () => {
   test('status 201: responds with the newly added article post', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         author: 'lurker',
         title: 'Article Test Title',
         body: 'Article test body',
         topic: 'paper',
-        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        article_img_url:
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       })
       .expect(201)
       .then(({ body }) => {
@@ -742,14 +744,15 @@ describe('POST: /api/articles', () => {
           votes: 0,
           created_at: expect.any(String),
           comment_count: 0,
-          article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-        })
-      })
-  })
+          article_img_url:
+            'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        });
+      });
+  });
 
   test('status 201: responds with the newly added article post with a default image if no article_img_url is provided', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         author: 'lurker',
         title: 'Article Test Title',
@@ -767,100 +770,130 @@ describe('POST: /api/articles', () => {
           votes: 0,
           created_at: expect.any(String),
           comment_count: 0,
-          article_img_url: 'https://source.unsplash.com/700x700',
-        })
-      })
-  })
+          article_img_url: 'https://i.ibb.co/60VdM4xv/Untitled-design.png',
+        });
+      });
+  });
 
   test('status 400: responds with a Bad request error when given an author who does not exist', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         author: 'unknown',
         title: 'Article Test Title',
         body: 'Article test body',
         topic: 'paper',
-        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        article_img_url:
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request")
-      })
-  })
+        expect(body.msg).toBe('Bad request');
+      });
+  });
 
   test('status 400: responds with a Bad request error when given no author key in the request body', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         title: 'Article Test Title',
         body: 'Article test body',
         topic: 'paper',
-        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        article_img_url:
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request")
-      })
-  })
+        expect(body.msg).toBe('Bad request');
+      });
+  });
 
   test('status 400: responds with a Bad request error when given no title key in the request body', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         author: 'lurker',
         body: 'Article test body',
         topic: 'paper',
-        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        article_img_url:
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request")
-      })
-  })
+        expect(body.msg).toBe('Bad request');
+      });
+  });
 
   test('status 400: responds with a Bad request error when given no body key in the request body', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         author: 'lurker',
         title: 'Article Test Title',
         topic: 'paper',
-        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        article_img_url:
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request")
-      })
-  })
+        expect(body.msg).toBe('Bad request');
+      });
+  });
 
   test('status 400: responds with a Bad request error when given no topic key in the request body', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         author: 'lurker',
         title: 'Article Test Title',
         body: 'Article test body',
-        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        article_img_url:
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request")
-      })
-  })
+        expect(body.msg).toBe('Bad request');
+      });
+  });
 
   test('status 400: responds with a Bad request error when given a topic that does not exist', () => {
     return request(app)
-      .post("/api/articles")
+      .post('/api/articles')
       .send({
         author: 'lurker',
         title: 'Article Test Title',
         body: 'Article test body',
-        topic: "gaming",
-        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        topic: 'gaming',
+        article_img_url:
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request")
-      })
-  })
-})
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});
+
+describe('DELETE: /api/article/:article_id', () => {
+  test('status 204: responds with no content', () => {
+    return request(app).delete('/api/articles/1').expect(204);
+  });
+
+  test('status 404: responds with a Not found error when given a valid but non-existent article_id ', () => {
+    return request(app)
+      .delete('/api/articles/100')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article not found');
+      });
+  });
+
+  test('status 400: responds with a Bad request error when given an invalid article_id ', () => {
+    return request(app)
+      .delete('/api/articles/never_an_id')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});

@@ -3,6 +3,7 @@ const {
   fetchArticlesData,
   patchArticleById,
   postArticle,
+  removeArticleById,
 } = require('../models/articles.models');
 
 exports.getArticleById = async (req, res, next) => {
@@ -38,10 +39,26 @@ exports.updateArticleById = async (req, res, next) => {
 exports.addArticles = async (req, res, next) => {
   try {
     const { author, title, body, topic, article_img_url } = req.body;
-    const addedArticle = await postArticle(author, title, body, topic, article_img_url);
+    const addedArticle = await postArticle(
+      author,
+      title,
+      body,
+      topic,
+      article_img_url
+    );
 
     res.status(201).send({ article: addedArticle });
   } catch (err) {
     next(err);
   }
-}
+};
+
+exports.deleteArticleById = async (req, res, next) => {
+  try {
+    const { article_id } = req.params;
+    await removeArticleById(article_id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
