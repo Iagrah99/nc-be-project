@@ -21,7 +21,7 @@ module.exports = [
     username: 'cooljmessy',
     name: 'Peter Messy',
     avatar_url:
-      'hhttps://res.cloudinary.com/dafsdsmus/image/upload/v1745597601/cooljmessy_wlrojg_ha7ccl.png',
+      'https://res.cloudinary.com/dafsdsmus/image/upload/v1745597601/cooljmessy_wlrojg_ha7ccl.png',
   },
   {
     username: 'weegembump',
