@@ -49,20 +49,45 @@ exports.deleteCommentById = async (comment_id) => {
   return;
 };
 
-exports.patchCommentById = async (comment_id, inc_votes) => {
-
-  if (typeof inc_votes !== 'number') {
-    return Promise.reject({ status: 400, msg: 'Bad request' });
+exports.patchCommentById = async (comment_id, inc_votes, body) => {
+  if (!comment_id) {
+    return Promise.reject({
+      status: 400,
+      msg: 'Bad request: Missing comment_id',
+    });
   }
 
-  const updatedCommentQuery = await db.query(
-    `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`,
-    [inc_votes, comment_id]
-  );
+  // CASE 1: Updating the body
+  if (body) {
+    const bodyQuery = await db.query(
+      `UPDATE comments SET body = $1 WHERE comment_id = $2 RETURNING *;`,
+      [body, comment_id]
+    );
 
-  if (!updatedCommentQuery.rows[0]) {
-    return Promise.reject({ status: 404, msg: 'Not found' });
+    if (!bodyQuery.rows[0]) {
+      return Promise.reject({ status: 404, msg: 'Comment not found' });
+    }
+
+    return bodyQuery.rows[0];
   }
 
-  return updatedCommentQuery.rows[0];
-}
+  // CASE 2: Updating the votes
+  if (typeof inc_votes === 'number') {
+    const updatedCommentQuery = await db.query(
+      `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`,
+      [inc_votes, comment_id]
+    );
+
+    if (!updatedCommentQuery.rows[0]) {
+      return Promise.reject({ status: 404, msg: 'Comment not found' });
+    }
+
+    return updatedCommentQuery.rows[0];
+  }
+
+  // CASE 3: Neither body nor inc_votes provided properly
+  return Promise.reject({
+    status: 400,
+    msg: 'Bad request: No valid fields to update',
+  });
+};

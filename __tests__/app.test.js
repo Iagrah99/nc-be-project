@@ -719,6 +719,26 @@ describe('PATCH: /api/comments/:comment_id', () => {
         expect(body.msg).toBe('Not found');
       });
   });
+
+  test.only('status 200: responds with the updated comment body, leaving the other properties unchanged.', () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({
+        body: 'Here is the updated comment.',
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 1,
+          body: 'Here is the updated comment.',
+          votes: 16,
+          author: 'butter_bridge',
+          article_id: 9,
+          created_at: '2020-04-06T12:17:00.000Z',
+        });
+      });
+  });
 });
 
 describe('POST: /api/articles', () => {

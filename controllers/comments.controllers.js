@@ -41,8 +41,9 @@ exports.removeCommentById = async (req, res, next) => {
 exports.updateCommentById = async (req, res, next) => {
   try {
     const { comment_id } = req.params;
-    const { inc_votes } = req.body;
-    const updatedComment = await patchCommentById(comment_id, inc_votes);
+    const { inc_votes, body } = req.body;
+    console.log(body);
+    const updatedComment = await patchCommentById(comment_id, inc_votes, body);
     res.status(200).send({ comment: updatedComment });
   } catch (err) {
     next(err);
