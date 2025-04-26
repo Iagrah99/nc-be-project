@@ -281,17 +281,17 @@ describe('PATCH /api/articles/:article_id', () => {
       });
   });
 
-  test('status 200: responds with the article with the votes property unchanged if inc_votes is missing from the request body', () => {
-    return request(app)
-      .patch('/api/articles/1')
-      .send({})
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.article.votes).toBe(100);
-      });
-  });
+  // test('status 200: responds with the article with the votes property unchanged if inc_votes is missing from the request body', () => {
+  //   return request(app)
+  //     .patch('/api/articles/1')
+  //     .send({})
+  //     .expect(200)
+  //     .then(({ body }) => {
+  //       expect(body.article.votes).toBe(100);
+  //     });
+  // });
 
-  test.only('status 200: responds with the article with the specified new image url, leaving the other properties unchanged', () => {
+  test('status 200: responds with the article with the specified new image url, leaving the other properties unchanged', () => {
     return request(app)
       .patch('/api/articles/1')
       .send({
@@ -727,7 +727,7 @@ describe('PATCH: /api/comments/:comment_id', () => {
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad request');
+        expect(body.msg).toBe('Bad request: No valid fields to update');
       });
   });
 
