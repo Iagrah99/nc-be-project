@@ -42,14 +42,7 @@ exports.updateCommentById = async (req, res, next) => {
   try {
     const { comment_id } = req.params;
     const { inc_votes, body } = req.body;
-
-    // If neither inc_votes nor body is provided, reject the request
-    if (inc_votes === undefined && body === undefined) {
-      Promise.reject({ msg: 'No valid fields to update', status: 400 });
-    }
-
     const updatedComment = await patchCommentById(comment_id, inc_votes, body);
-
     res.status(200).send({ comment: updatedComment });
   } catch (err) {
     next(err);
