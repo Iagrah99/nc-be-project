@@ -28,8 +28,13 @@ exports.getArticles = async (req, res, next) => {
 exports.updateArticleById = async (req, res, next) => {
   try {
     const { article_id } = req.params;
-    const { inc_votes } = req.body;
-    const updatedArticle = await patchArticleById(article_id, inc_votes);
+    const { inc_votes, article_img_url } = req.body;
+
+    const updatedArticle = await patchArticleById(
+      article_id,
+      inc_votes,
+      article_img_url
+    );
     res.status(200).send({ article: updatedArticle });
   } catch (err) {
     next(err);

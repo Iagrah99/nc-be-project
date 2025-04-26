@@ -291,6 +291,29 @@ describe('PATCH /api/articles/:article_id', () => {
       });
   });
 
+  test.only('status 200: responds with the article with the specified new image url, leaving the other properties unchanged', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({
+        article_img_url:
+          'https://res.cloudinary.com/dafsdsmus/image/upload/v1745619774/pexels-luis-gomes-166706-546819_zr9ryr.jpg',
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2020-07-09T20:11:00.000Z',
+          votes: 100,
+          article_img_url:
+            'https://res.cloudinary.com/dafsdsmus/image/upload/v1745619774/pexels-luis-gomes-166706-546819_zr9ryr.jpg',
+        });
+      });
+  });
+
   test('status 404: responds with a Not found error when given a valid but non-existent article id', () => {
     return request(app)
       .patch('/api/articles/50')
