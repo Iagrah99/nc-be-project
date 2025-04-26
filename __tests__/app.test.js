@@ -716,11 +716,11 @@ describe('PATCH: /api/comments/:comment_id', () => {
       })
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Not found');
+        expect(body.msg).toBe('Comment not found');
       });
   });
 
-  test.only('status 200: responds with the updated comment body, leaving the other properties unchanged.', () => {
+  test('status 200: responds with the updated comment body, leaving the other properties unchanged.', () => {
     return request(app)
       .patch('/api/comments/1')
       .send({
@@ -729,6 +729,7 @@ describe('PATCH: /api/comments/:comment_id', () => {
       .expect(200)
       .then(({ body }) => {
         const { comment } = body;
+        console.log(body);
         expect(comment).toMatchObject({
           comment_id: 1,
           body: 'Here is the updated comment.',
