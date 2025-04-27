@@ -186,7 +186,12 @@
   },
   "GET /api/comments/:username": {
     "description": "responds with an array of all comments belonging to the user with the specified username",
-    "queries": [],
+    "queries": {
+      "sort_by": [
+        "created_at",
+        "votes"
+      ]
+    },
     "exampleResponse": [
       {
         "comment_id": 2,

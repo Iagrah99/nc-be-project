@@ -53,7 +53,8 @@ exports.updateCommentById = async (req, res, next) => {
 exports.getCommentsByUser = async (req, res, next) => {
   try {
     const { username } = req.params;
-    const commentsByUsername = await fetchCommentsByUsername(username);
+    const { sort_by } = req.query;
+    const commentsByUsername = await fetchCommentsByUsername(username, sort_by);
     res.status(200).send({ comments: commentsByUsername });
   } catch (err) {
     next(err);

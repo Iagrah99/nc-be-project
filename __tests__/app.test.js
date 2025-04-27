@@ -997,7 +997,7 @@ describe('DELETE: /api/article/:article_id', () => {
   });
 });
 
-describe.only('GET: /api/comments/:username', () => {
+describe('GET: /api/comments/:username', () => {
   test('status 200: responds with an array of comments belonging to the specified user', () => {
     return request(app)
       .get('/api/comments/icellusedkars')
@@ -1008,6 +1008,36 @@ describe.only('GET: /api/comments/:username', () => {
         comments.forEach((comment) => {
           expect(comment.author).toBe('icellusedkars');
         });
+      });
+  });
+
+  test('status 200: the comments should sorted by the number of votes when specified', () => {
+    return request(app)
+      .get('/api/comments/icellusedkars?sort_by=votes')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeSortedBy('votes');
+      });
+  });
+
+  test('status 200: the comments should sorted by the created_at date when specified', () => {
+    return request(app)
+      .get('/api/comments/icellusedkars?sort_by=created_at')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeSortedBy('created_at');
+      });
+  });
+
+  test('status 400: should respond with a Bad request error when given an invalid sort_by query', () => {
+    return request(app)
+      .get('/api/comments/icellusedkars?sort_by=invalid')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad request: Invalid sort_by query specified.');
       });
   });
 
