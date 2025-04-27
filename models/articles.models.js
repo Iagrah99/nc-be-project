@@ -95,7 +95,10 @@ exports.fetchArticlesData = async (
 exports.patchArticleById = async (
   article_id,
   inc_votes = 0,
-  article_img_url
+  article_img_url,
+  article_body,
+  title,
+  topic
 ) => {
   if (inc_votes) {
     if (typeof inc_votes !== 'number') {
@@ -118,6 +121,45 @@ exports.patchArticleById = async (
     const updatedArticleQuery = await db.query(
       `UPDATE articles SET article_img_url = $1 WHERE article_id = $2 RETURNING *;`,
       [article_img_url, article_id]
+    );
+
+    if (!updatedArticleQuery.rows[0]) {
+      return Promise.reject({ status: 404, msg: 'Not found' });
+    }
+
+    return updatedArticleQuery.rows[0];
+  }
+
+  if (article_body) {
+    const updatedArticleQuery = await db.query(
+      `UPDATE articles SET body = $1 WHERE article_id = $2 RETURNING *;`,
+      [article_body, article_id]
+    );
+
+    if (!updatedArticleQuery.rows[0]) {
+      return Promise.reject({ status: 404, msg: 'Not found' });
+    }
+
+    return updatedArticleQuery.rows[0];
+  }
+
+  if (title) {
+    const updatedArticleQuery = await db.query(
+      `UPDATE articles SET title = $1 WHERE article_id = $2 RETURNING *;`,
+      [title, article_id]
+    );
+
+    if (!updatedArticleQuery.rows[0]) {
+      return Promise.reject({ status: 404, msg: 'Not found' });
+    }
+
+    return updatedArticleQuery.rows[0];
+  }
+
+  if (topic) {
+    const updatedArticleQuery = await db.query(
+      `UPDATE articles SET topic = $1 WHERE article_id = $2 RETURNING *;`,
+      [topic, article_id]
     );
 
     if (!updatedArticleQuery.rows[0]) {
