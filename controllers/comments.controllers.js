@@ -3,6 +3,7 @@ const {
   insertCommentByArticleId,
   deleteCommentById,
   patchCommentById,
+  fetchCommentsByUsername,
 } = require('../models/comments.models');
 
 exports.getCommentsByArticleId = async (req, res, next) => {
@@ -44,6 +45,16 @@ exports.updateCommentById = async (req, res, next) => {
     const { inc_votes, body } = req.body;
     const updatedComment = await patchCommentById(comment_id, inc_votes, body);
     res.status(200).send({ comment: updatedComment });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getCommentsByUser = async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const commentsByUsername = await fetchCommentsByUsername(username);
+    res.status(200).send({ comments: commentsByUsername });
   } catch (err) {
     next(err);
   }

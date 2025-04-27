@@ -91,3 +91,18 @@ exports.patchCommentById = async (comment_id, inc_votes, body) => {
     msg: 'Bad request: No valid fields to update',
   });
 };
+
+exports.fetchCommentsByUsername = async (username) => {
+  await checkUserExists(username);
+
+  if (!username) {
+    return Promise.reject({ status: 400, msg: 'Bad request' });
+  }
+
+  const commentsByUser = await db.query(
+    `SELECT * FROM comments WHERE author = $1;`,
+    [username]
+  );
+
+  return commentsByUser.rows;
+};

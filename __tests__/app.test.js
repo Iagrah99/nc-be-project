@@ -996,3 +996,28 @@ describe('DELETE: /api/article/:article_id', () => {
       });
   });
 });
+
+describe.only('GET: /api/comments/:username', () => {
+  test('status 200: responds with an array of comments belonging to the specified user', () => {
+    return request(app)
+      .get('/api/comments/icellusedkars')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(Array.isArray(comments));
+        comments.forEach((comment) => {
+          expect(comment.author).toBe('icellusedkars');
+        });
+      });
+  });
+
+  test('status 404: responds with a Not found error when provided a username that does not exist', () => {
+    return request(app)
+      .get('/api/comments/unknownuser')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not found');
+      });
+  });
+});
