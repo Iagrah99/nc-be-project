@@ -1011,23 +1011,39 @@ describe('GET: /api/comments/:username', () => {
       });
   });
 
-  test('status 200: the comments should sorted by the number of votes when specified', () => {
+  test('status 200: the comments should sorted by the number of votes and be in descending order by default', () => {
+    return request(app)
+      .get('/api/comments/icellusedkars')
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeSortedBy('votes', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: the comments should sorted by the number of votes when specified and be in descending order by default', () => {
     return request(app)
       .get('/api/comments/icellusedkars?sort_by=votes')
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        expect(comments).toBeSortedBy('votes');
+        expect(comments).toBeSortedBy('votes', {
+          descending: true,
+        });
       });
   });
 
-  test('status 200: the comments should sorted by the created_at date when specified', () => {
+  test('status 200: the comments should sorted by the created_at date when specified and be in descending order by default', () => {
     return request(app)
       .get('/api/comments/icellusedkars?sort_by=created_at')
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        expect(comments).toBeSortedBy('created_at');
+        expect(comments).toBeSortedBy('created_at', {
+          descending: true,
+        });
       });
   });
 

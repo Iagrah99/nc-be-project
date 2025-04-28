@@ -92,10 +92,16 @@ exports.patchCommentById = async (comment_id, inc_votes, body) => {
   });
 };
 
-exports.fetchCommentsByUsername = async (username, sort_by = 'created_at') => {
+exports.fetchCommentsByUsername = async (
+  username,
+  sort_by = 'votes',
+  order_by = 'desc'
+) => {
   await checkUserExists(username);
 
   const validSortByQueries = ['votes', 'created_at'];
+
+  const validOrderByQueries = ['desc', 'asc'];
 
   if (!validSortByQueries.includes(sort_by)) {
     return Promise.reject({
@@ -104,12 +110,19 @@ exports.fetchCommentsByUsername = async (username, sort_by = 'created_at') => {
     });
   }
 
+  if (!validOrderByQueries.includes(order_by)) {
+    return Promise.reject({
+      status: 400,
+      msg: 'Bad request: Invalid order_by query specified.',
+    });
+  }
+
   if (!username) {
     return Promise.reject({ status: 400, msg: 'Bad request' });
   }
 
   const commentsByUser = await db.query(
-    `SELECT * FROM comments WHERE author = $1 ORDER BY ${sort_by};`,
+    `SELECT * FROM comments WHERE author = $1 ORDER BY ${sort_by} ${order_by};`,
     [username]
   );
 
