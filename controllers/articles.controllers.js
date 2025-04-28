@@ -30,8 +30,6 @@ exports.updateArticleById = async (req, res, next) => {
     const { article_id } = req.params;
     const { inc_votes, article_img_url, article_body, title, topic } = req.body;
 
-    console.log(topic);
-
     const updatedArticle = await patchArticleById(
       article_id,
       inc_votes,

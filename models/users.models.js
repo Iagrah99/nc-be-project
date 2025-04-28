@@ -26,7 +26,7 @@ exports.fetchArticlesByUsername = async (
   request,
   username,
   sort_by = 'created_at',
-  order_by = 'DESC',
+  order_by = 'desc',
   limit = 20,
   p = 1
 ) => {
