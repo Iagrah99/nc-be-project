@@ -40,7 +40,7 @@ exports.fetchArticlesData = async (
                 COUNT(comments.article_id)::INT AS comment_count
               FROM articles
                 LEFT JOIN comments
-                on articles.article_id = comments.article_id`;
+                ON articles.article_id = comments.article_id`;
 
   const validSortByQueries = [
     'article_id',
@@ -54,13 +54,31 @@ exports.fetchArticlesData = async (
   ];
   const validOrderByQueries = ['desc', 'asc'];
 
+  if (request.query.p) {
+    p = parseInt(request.query.p);
+
+    if (!Number.isInteger(p) || p < 1) {
+      return Promise.reject({
+        status: 400,
+        msg: 'Bad request: Invalid page number specified',
+      });
+    }
+  }
+
+  if (request.query.limit) {
+    limit = parseInt(request.query.limit, 10);
+
+    if (!Number.isInteger(limit) || limit < 1) {
+      return Promise.reject({
+        status: 400,
+        msg: 'Bad request: Invalid limit number specified',
+      });
+    }
+  }
+
   const offset = (p - 1) * limit;
 
   const validTopics = (await fetchTopicsData()).map((topic) => topic.slug);
-
-  if (typeof p !== 'number') {
-    return Promise.reject({ status: 400, msg: 'Bad request.' });
-  }
 
   if (request.query.topic) {
     const topicExists = validTopics.includes(request.query.topic);

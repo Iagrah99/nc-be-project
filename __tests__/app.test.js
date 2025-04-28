@@ -1108,7 +1108,7 @@ describe('GET /api/articles (Pagination)', () => {
   });
 });
 
-describe.only('GET /api/users/:username/articles', () => {
+describe('GET /api/users/:username/articles', () => {
   test('status 200: responds with an array of all the articles that belong to the user with the specified username', () => {
     return request(app)
       .get('/api/users/icellusedkars/articles')
