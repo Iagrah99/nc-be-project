@@ -27,7 +27,8 @@ exports.fetchArticlesData = async (
   limit = 12,
   p = 1
 ) => {
-  const queryParameters = [];
+  let queryParameters = [];
+  let whereClause = '';
 
   let query = `SELECT
                 articles.article_id,
@@ -39,8 +40,8 @@ exports.fetchArticlesData = async (
                 articles.article_img_url,
                 COUNT(comments.article_id)::INT AS comment_count
               FROM articles
-                LEFT JOIN comments
-                ON articles.article_id = comments.article_id`;
+              LEFT JOIN comments
+              ON articles.article_id = comments.article_id`;
 
   const validSortByQueries = [
     'article_id',
@@ -54,10 +55,9 @@ exports.fetchArticlesData = async (
   ];
   const validOrderByQueries = ['desc', 'asc'];
 
-  // ✅ Parse p from the request if provided
+  // ✅ Parse page number
   if (request.query.p !== undefined) {
-    p = parseInt(request.query.p);
-
+    p = parseInt(request.query.p, 10);
     if (!Number.isInteger(p) || p < 1) {
       return Promise.reject({
         status: 400,
@@ -66,10 +66,9 @@ exports.fetchArticlesData = async (
     }
   }
 
-  // ✅ Parse limit from the request if needed (optional - in case you allow limit to be dynamic in future)
+  // ✅ Parse limit
   if (request.query.limit !== undefined) {
     limit = parseInt(request.query.limit, 10);
-
     if (!Number.isInteger(limit) || limit < 1) {
       return Promise.reject({
         status: 400,
@@ -85,13 +84,19 @@ exports.fetchArticlesData = async (
   if (request.query.topic) {
     const topicExists = validTopics.includes(request.query.topic);
     if (topicExists) {
-      query += ` WHERE topic = $1`;
+      whereClause = `WHERE topic = $1`;
       queryParameters.push(request.query.topic);
     } else {
       return Promise.reject({ status: 404, msg: 'Topic not found' });
     }
   }
 
+  // ✅ Add WHERE if needed
+  if (whereClause) {
+    query += ` ${whereClause}`;
+  }
+
+  // ✅ Validate sort_by
   if (request.query.sort_by) {
     const queryIsValid = validSortByQueries.includes(request.query.sort_by);
     if (queryIsValid) {
@@ -103,6 +108,7 @@ exports.fetchArticlesData = async (
 
   query += ` GROUP BY articles.article_id`;
 
+  // ✅ Validate order_by
   if (request.query.order_by) {
     const orderByIsValid = validOrderByQueries.includes(request.query.order_by);
     if (orderByIsValid) {
@@ -115,16 +121,19 @@ exports.fetchArticlesData = async (
   query += ` ORDER BY ${sort_by} ${order_by.toUpperCase()}`;
   query += ` LIMIT ${limit} OFFSET ${offset};`;
 
-  // Now that topic filter is known, run a matching total count query
+  // ✅ Run total count query separately and safely
   let countQuery = `SELECT COUNT(*) FROM articles`;
+  let countParameters = [];
+
   if (request.query.topic) {
-    countQuery += ` WHERE topic = $1`; // use same $1 as above
+    countQuery += ` WHERE topic = $1`;
+    countParameters.push(request.query.topic);
   }
 
-  const totalCountResult = await db.query(countQuery, queryParameters);
+  const totalCountResult = await db.query(countQuery, countParameters);
   const total_count = parseInt(totalCountResult.rows[0].count);
 
-  // Fetch paginated articles
+  // ✅ Fetch paginated articles
   const articlesData = await db.query(query, queryParameters);
 
   return { articles: articlesData.rows, total_count };
