@@ -23,8 +23,12 @@ exports.fetchArticleById = async (id) => {
 exports.fetchArticlesData = async (
   request,
   sort_by = 'created_at',
-  order_by = 'DESC'
+  order_by = 'DESC',
+  limit = 12,
+  p = 1
 ) => {
+  const queryParameters = [];
+
   let query = `SELECT
                 articles.article_id,
                 title,
@@ -36,9 +40,8 @@ exports.fetchArticlesData = async (
                 COUNT(comments.article_id)::INT AS comment_count
               FROM articles
                 LEFT JOIN comments
-                on articles.article_id = comments.article_id`;
+                ON articles.article_id = comments.article_id`;
 
-  const queryParameters = [];
   const validSortByQueries = [
     'article_id',
     'title',
@@ -51,9 +54,33 @@ exports.fetchArticlesData = async (
   ];
   const validOrderByQueries = ['desc', 'asc'];
 
-  const validTopics = (await fetchTopicsData()).map((topic) => {
-    return topic.slug;
-  });
+  // ✅ Parse p from the request if provided
+  if (request.query.p !== undefined) {
+    p = parseInt(request.query.p);
+
+    if (!Number.isInteger(p) || p < 1) {
+      return Promise.reject({
+        status: 400,
+        msg: 'Bad request: Invalid page number specified',
+      });
+    }
+  }
+
+  // ✅ Parse limit from the request if needed (optional - in case you allow limit to be dynamic in future)
+  if (request.query.limit !== undefined) {
+    limit = parseInt(request.query.limit, 10);
+
+    if (!Number.isInteger(limit) || limit < 1) {
+      return Promise.reject({
+        status: 400,
+        msg: 'Bad request: Invalid limit number specified',
+      });
+    }
+  }
+
+  const offset = (p - 1) * limit;
+
+  const validTopics = (await fetchTopicsData()).map((topic) => topic.slug);
 
   if (request.query.topic) {
     const topicExists = validTopics.includes(request.query.topic);
@@ -85,11 +112,22 @@ exports.fetchArticlesData = async (
     }
   }
 
-  query += ` ORDER BY ${sort_by} ${order_by.toUpperCase()};`;
+  query += ` ORDER BY ${sort_by} ${order_by.toUpperCase()}`;
+  query += ` LIMIT ${limit} OFFSET ${offset};`;
 
+  // Now that topic filter is known, run a matching total count query
+  let countQuery = `SELECT COUNT(*) FROM articles`;
+  if (request.query.topic) {
+    countQuery += ` WHERE topic = $1`; // use same $1 as above
+  }
+
+  const totalCountResult = await db.query(countQuery, queryParameters);
+  const total_count = parseInt(totalCountResult.rows[0].count);
+
+  // Fetch paginated articles
   const articlesData = await db.query(query, queryParameters);
 
-  return articlesData.rows;
+  return { articles: articlesData.rows, total_count };
 };
 
 exports.patchArticleById = async (

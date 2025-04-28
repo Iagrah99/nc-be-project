@@ -18,8 +18,8 @@ exports.getArticleById = async (req, res, next) => {
 
 exports.getArticles = async (req, res, next) => {
   try {
-    const articles = await fetchArticlesData(req);
-    res.status(200).send({ articles });
+    const { articles, total_count } = await fetchArticlesData(req);
+    res.status(200).send({ articles, total_count });
   } catch (err) {
     next(err);
   }

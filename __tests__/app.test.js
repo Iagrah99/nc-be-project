@@ -94,7 +94,7 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('created_at', {
           descending: true,
         });
@@ -493,7 +493,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=article_id&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('article_id', {
           ascending: true,
         });
@@ -505,7 +505,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=article_id')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('article_id', {
           descending: true,
         });
@@ -517,7 +517,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=title&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('title', {
           ascending: true,
         });
@@ -529,7 +529,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=title')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('title', {
           descending: true,
         });
@@ -541,7 +541,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=topic&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('topic', {
           ascending: true,
         });
@@ -553,7 +553,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=topic')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('topic', {
           descending: true,
         });
@@ -565,7 +565,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=author&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('author', {
           ascending: true,
         });
@@ -577,7 +577,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=author')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('author', {
           descending: true,
         });
@@ -589,7 +589,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=votes&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('votes', {
           ascending: true,
         });
@@ -601,7 +601,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=votes')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('votes', {
           descending: true,
         });
@@ -613,7 +613,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=article_img_url&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('article_img_url', {
           ascending: true,
         });
@@ -625,7 +625,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=article_img_url')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('article_img_url', {
           descending: true,
         });
@@ -637,7 +637,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=comment_count&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('comment_count', {
           ascending: true,
         });
@@ -649,7 +649,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=comment_count')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('comment_count', {
           descending: true,
         });
@@ -661,7 +661,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=created_at')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('created_at', {
           descending: true,
         });
@@ -673,7 +673,7 @@ describe('GET /api/articles (sorting queries)', () => {
       .get('/api/articles?sort_by=created_at&order_by=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        expect(body.articles.length).toBe(12);
         expect(body.articles).toBeSortedBy('created_at', {
           ascending: true,
         });
@@ -1048,6 +1048,46 @@ describe('GET: /api/comments/:username', () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe('Not found');
+      });
+  });
+});
+
+describe('GET /api/articles (Pagination)', () => {
+  test('status 200: responds with the first page of articles with default limit if no query provided', () => {
+    return request(app)
+      .get('/api/articles') // no limit, no p
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).toBeLessThanOrEqual(12); // Default limit assumed to be 12
+
+        expect(typeof total_count).toBe('number');
+        expect(total_count).toBeGreaterThan(0);
+      });
+  });
+
+  test('status 200: responds with next page of articles when p=2 is provided', () => {
+    return request(app)
+      .get('/api/articles?p=2')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles, total_count } = body;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).toBeLessThanOrEqual(12);
+        expect(typeof total_count).toBe('number');
+        expect(total_count).toBeGreaterThan(0);
+      });
+  });
+
+  test('status 400: responds with an error if p is not a valid number', () => {
+    return request(app)
+      .get('/api/articles?p=banana')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad request: Invalid page number specified');
       });
   });
 });
