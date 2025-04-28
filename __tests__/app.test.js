@@ -1107,3 +1107,28 @@ describe('GET /api/articles (Pagination)', () => {
       });
   });
 });
+
+describe.only('GET /api/users/:username/articles', () => {
+  test('status 200: responds with an array of all the articles that belong to the user with the specified username', () => {
+    return request(app)
+      .get('/api/users/icellusedkars/articles')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(Array.isArray(articles)).toBe(true);
+        articles.forEach((article) => {
+          expect(article.author).toBe('icellusedkars');
+        });
+      });
+  });
+
+  test('status 404: responds with a Not found error when given a username that does not exist', () => {
+    return request(app)
+      .get('/api/users/unknown/articles')
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Not found');
+      });
+  });
+});

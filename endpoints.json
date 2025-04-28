@@ -202,5 +202,24 @@
         "created_at": 1604113380000
       }
     ]
+  },
+  "GET /api/users/:username/articles": {
+    "description": "responds with an array of all the articles that belong to the user with the specified username",
+    "queries": {
+      "sort_by": [
+        "votes"
+      ]
+    },
+    "exampleResponse": [
+      {
+        "article_id": 11,
+        "title": "Am I a cat?",
+        "topic": "mitch",
+        "author": "icellusedkars",
+        "body": "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+        "created_at": 1579126860000,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
+    ]
   }
 }

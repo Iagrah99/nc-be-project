@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { checkUserExists } = require('../utils/checkUserExists');
 
 exports.fetchUsersData = async () => {
   const usersData = await db.query('SELECT * FROM users');
@@ -6,7 +7,6 @@ exports.fetchUsersData = async () => {
 };
 
 exports.fetchUserByUsername = async (username) => {
-
   const userData = await db.query(
     `SELECT * FROM users
      WHERE users.username = $1`,
@@ -20,4 +20,87 @@ exports.fetchUserByUsername = async (username) => {
   }
 
   return userData.rows[0];
-}
+};
+
+exports.fetchArticlesByUsername = async (
+  request,
+  username,
+  sort_by = 'created_at',
+  order_by = 'DESC',
+  limit = 20,
+  p = 1
+) => {
+  let queryParameters = [];
+  let whereConditions = [];
+
+  await checkUserExists(username);
+
+  let query = `SELECT
+                articles.article_id,
+                title,
+                topic,
+                articles.author,
+                articles.created_at,
+                articles.votes,
+                articles.article_img_url,
+                COUNT(comments.article_id)::INT AS comment_count
+              FROM articles
+              LEFT JOIN comments
+              ON articles.article_id = comments.article_id`;
+
+  const validSortByQueries = ['topic', 'votes', 'comment_count', 'created_at'];
+  const validOrderByQueries = ['desc', 'asc'];
+
+  const offset = (p - 1) * limit;
+
+  if (typeof p !== 'number') {
+    return Promise.reject({ status: 400, msg: 'Bad request.' });
+  }
+
+  if (username) {
+    whereConditions.push(`articles.author = $${queryParameters.length + 1}`);
+    queryParameters.push(username);
+  }
+
+  if (whereConditions.length) {
+    query += ` WHERE ` + whereConditions.join(' AND ');
+  }
+
+  // Handle sorting
+  if (request.query.sort_by) {
+    const queryIsValid = validSortByQueries.includes(request.query.sort_by);
+    if (queryIsValid) {
+      sort_by = request.query.sort_by;
+    } else {
+      return Promise.reject({ status: 400, msg: 'Invalid sort by query' });
+    }
+  }
+
+  query += ` GROUP BY articles.article_id`;
+
+  if (request.query.order_by) {
+    const orderByIsValid = validOrderByQueries.includes(request.query.order_by);
+    if (orderByIsValid) {
+      order_by = request.query.order_by;
+    } else {
+      return Promise.reject({ status: 400, msg: 'Invalid order by query' });
+    }
+  }
+
+  query += ` ORDER BY ${sort_by} ${order_by.toUpperCase()}`;
+  query += ` LIMIT ${limit} OFFSET ${offset};`;
+
+  // Total count
+  let countQuery = `SELECT COUNT(*) FROM articles`;
+  if (whereConditions.length) {
+    countQuery += ` WHERE ` + whereConditions.join(' AND ');
+  }
+
+  const totalCountResult = await db.query(countQuery, queryParameters);
+  const total_count = parseInt(totalCountResult.rows[0].count);
+
+  // Fetch paginated articles
+  const articlesData = await db.query(query, queryParameters);
+
+  return { userArticles: articlesData.rows, total_count };
+};
