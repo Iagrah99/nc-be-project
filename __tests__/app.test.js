@@ -487,6 +487,47 @@ describe('GET /api/articles?topic_query', () => {
   });
 });
 
+describe.only('GET /api/articles?author_query', () => {
+  test('status 200: responds with the articles filtered by author', () => {
+    return request(app)
+      .get('/api/articles?author=icellusedkars')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles.length).toBe(6);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: 'icellusedkars',
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("status 200: responds with an empty array if author's username exists but has no articles", () => {
+    return request(app)
+      .get('/api/articles?author=lurker')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+
+  test('status 404: responds with a Not found error when given a valid but non-existent author query ', () => {
+    return request(app)
+      .get('/api/articles?author=invalid')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+  });
+});
+
 describe('GET /api/articles (sorting queries)', () => {
   test('status 200: returns the articles sorted by the article_id and in ascending order when both are specified', () => {
     return request(app)

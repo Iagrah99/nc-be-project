@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { checkUserExists } = require('../utils/checkUserExists');
 const { fetchTopicsData } = require('./topics.models');
 
 exports.fetchArticleById = async (id) => {
@@ -28,19 +29,22 @@ exports.fetchArticlesData = async (
   p = 1
 ) => {
   const queryParameters = [];
+  const whereConditions = []; // New array to hold WHERE conditions dynamically
 
-  let query = `SELECT
-                articles.article_id,
-                title,
-                topic,
-                articles.author,
-                articles.created_at,
-                articles.votes,
-                articles.article_img_url,
-                COUNT(comments.article_id)::INT AS comment_count
-              FROM articles
-                LEFT JOIN comments
-                ON articles.article_id = comments.article_id`;
+  let query = `
+    SELECT
+      articles.article_id,
+      title,
+      topic,
+      articles.author,
+      articles.created_at,
+      articles.votes,
+      articles.article_img_url,
+      COUNT(comments.article_id)::INT AS comment_count
+    FROM articles
+    LEFT JOIN comments
+    ON articles.article_id = comments.article_id
+  `;
 
   const validSortByQueries = [
     'article_id',
@@ -56,7 +60,6 @@ exports.fetchArticlesData = async (
 
   if (request.query.p) {
     p = parseInt(request.query.p);
-
     if (!Number.isInteger(p) || p < 1) {
       return Promise.reject({
         status: 400,
@@ -67,7 +70,6 @@ exports.fetchArticlesData = async (
 
   if (request.query.limit) {
     limit = parseInt(request.query.limit, 10);
-
     if (!Number.isInteger(limit) || limit < 1) {
       return Promise.reject({
         status: 400,
@@ -83,46 +85,51 @@ exports.fetchArticlesData = async (
   if (request.query.topic) {
     const topicExists = validTopics.includes(request.query.topic);
     if (topicExists) {
-      query += ` WHERE topic = $1`;
+      whereConditions.push(`topic = $${queryParameters.length + 1}`);
       queryParameters.push(request.query.topic);
     } else {
       return Promise.reject({ status: 404, msg: 'Topic not found' });
     }
   }
 
+  if (request.query.author) {
+    await checkUserExists(request.query.author);
+    whereConditions.push(`articles.author = $${queryParameters.length + 1}`);
+    queryParameters.push(request.query.author);
+  }
+
+  if (whereConditions.length) {
+    query += ` WHERE ` + whereConditions.join(' AND ');
+  }
+
   if (request.query.sort_by) {
-    const queryIsValid = validSortByQueries.includes(request.query.sort_by);
-    if (queryIsValid) {
-      sort_by = request.query.sort_by;
-    } else {
+    if (!validSortByQueries.includes(request.query.sort_by)) {
       return Promise.reject({ status: 400, msg: 'Invalid sort by query' });
     }
+    sort_by = request.query.sort_by;
   }
 
   query += ` GROUP BY articles.article_id`;
 
   if (request.query.order_by) {
-    const orderByIsValid = validOrderByQueries.includes(request.query.order_by);
-    if (orderByIsValid) {
-      order_by = request.query.order_by;
-    } else {
+    if (!validOrderByQueries.includes(request.query.order_by)) {
       return Promise.reject({ status: 400, msg: 'Invalid order by query' });
     }
+    order_by = request.query.order_by;
   }
 
   query += ` ORDER BY ${sort_by} ${order_by.toUpperCase()}`;
   query += ` LIMIT ${limit} OFFSET ${offset};`;
 
-  // Now that topic filter is known, run a matching total count query
+  // Total Count Query
   let countQuery = `SELECT COUNT(*) FROM articles`;
-  if (request.query.topic) {
-    countQuery += ` WHERE topic = $1`; // use same $1 as above
+  if (whereConditions.length) {
+    countQuery += ` WHERE ` + whereConditions.join(' AND ');
   }
 
   const totalCountResult = await db.query(countQuery, queryParameters);
   const total_count = parseInt(totalCountResult.rows[0].count);
 
-  // Fetch paginated articles
   const articlesData = await db.query(query, queryParameters);
 
   return { articles: articlesData.rows, total_count };
