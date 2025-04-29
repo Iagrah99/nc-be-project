@@ -1122,6 +1122,87 @@ describe('GET /api/users/:username/articles', () => {
       });
   });
 
+  test('status 200: sorts the array of user articles by votes by default by and in descending order by default', () => {
+    return request(app)
+      .get('/api/users/icellusedkars/articles')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy('votes', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: sorts the array of user articles by created_at date when specified by the sort_by query and in descending order by default', () => {
+    return request(app)
+      .get('/api/users/icellusedkars/articles?sort_by=created_at')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy('created_at', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: sorts the array of user articles by comment_count when specified by the sort_by query and in descending order by default', () => {
+    return request(app)
+      .get('/api/users/icellusedkars/articles?sort_by=comment_count')
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy('comment_count', {
+          descending: true,
+        });
+      });
+  });
+
+  test('status 200: sorts the array of user articles by created_at and in ascending order when both queries are specified', () => {
+    return request(app)
+      .get('/api/users/icellusedkars/articles?sort_by=created_at&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy('created_at', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: sorts the array of user articles by votes and in ascending order when both queries are specified', () => {
+    return request(app)
+      .get('/api/users/icellusedkars/articles?sort_by=votes&order_by=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy('votes', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 200: sorts the array of user articles by comment_count and in ascending order when both queries are specified', () => {
+    return request(app)
+      .get(
+        '/api/users/icellusedkars/articles?sort_by=comment_count&order_by=asc'
+      )
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy('comment_count', {
+          ascending: true,
+        });
+      });
+  });
+
+  test('status 400: responds with a Bad request error when given an invalid sort_by query', () => {
+    return request(app)
+      .get('/api/users/icellusedkars/articles?sort_by=title')
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Invalid sort by query');
+      });
+  });
+
   test('status 404: responds with a Not found error when given a username that does not exist', () => {
     return request(app)
       .get('/api/users/unknown/articles')
