@@ -147,7 +147,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       });
   });
 
-  test.only('status 200: responds with an array of comments according to the specified sort_by query in descending order by default', () => {
+  test('status 200: responds with an array of comments according to the specified sort_by query in descending order by default', () => {
     return request(app)
       .get('/api/articles/2/comments?sort_by=created_at')
       .expect(200)
@@ -158,7 +158,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       });
   });
 
-  test.only('status 200: responds with an array of comments according to the specified sort_by query in descending order by default', () => {
+  test('status 200: responds with an array of comments according to the specified sort_by query in descending order by default', () => {
     return request(app)
       .get('/api/articles/2/comments?sort_by=votes')
       .expect(200)
