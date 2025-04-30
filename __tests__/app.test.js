@@ -102,6 +102,7 @@ describe('GET /api/articles', () => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
             title: expect.any(String),
+            body: expect.any(String),
             topic: expect.any(String),
             author: expect.any(String),
             created_at: expect.any(String),
@@ -458,6 +459,7 @@ describe('GET /api/articles?topic_query', () => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
             title: expect.any(String),
+            body: expect.any(String),
             topic: 'mitch',
             author: expect.any(String),
             created_at: expect.any(String),
@@ -487,7 +489,7 @@ describe('GET /api/articles?topic_query', () => {
   });
 });
 
-describe.only('GET /api/articles?author_query', () => {
+describe('GET /api/articles?author_query', () => {
   test('status 200: responds with the articles filtered by author', () => {
     return request(app)
       .get('/api/articles?author=icellusedkars')
@@ -499,6 +501,7 @@ describe.only('GET /api/articles?author_query', () => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
             title: expect.any(String),
+            body: expect.any(String),
             topic: expect.any(String),
             author: 'icellusedkars',
             created_at: expect.any(String),

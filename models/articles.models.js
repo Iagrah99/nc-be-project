@@ -36,6 +36,7 @@ exports.fetchArticlesData = async (
       articles.article_id,
       title,
       topic,
+      articles.body,
       articles.author,
       articles.created_at,
       articles.votes,
