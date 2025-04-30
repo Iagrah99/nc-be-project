@@ -161,57 +161,48 @@ exports.patchArticleById = async (
     return updatedArticleQuery.rows[0];
   }
 
-  if (article_img_url) {
-    const updatedArticleQuery = await db.query(
-      `UPDATE articles SET article_img_url = $1 WHERE article_id = $2 RETURNING *;`,
-      [article_img_url, article_id]
-    );
-
-    if (!updatedArticleQuery.rows[0]) {
-      return Promise.reject({ status: 404, msg: 'Not found' });
-    }
-
-    return updatedArticleQuery.rows[0];
-  }
-
-  if (article_body) {
-    const updatedArticleQuery = await db.query(
-      `UPDATE articles SET body = $1 WHERE article_id = $2 RETURNING *;`,
-      [article_body, article_id]
-    );
-
-    if (!updatedArticleQuery.rows[0]) {
-      return Promise.reject({ status: 404, msg: 'Not found' });
-    }
-
-    return updatedArticleQuery.rows[0];
-  }
+  let query = 'UPDATE articles SET ';
+  const queryParams = [];
+  let queryIndex = 1;
 
   if (title) {
-    const updatedArticleQuery = await db.query(
-      `UPDATE articles SET title = $1 WHERE article_id = $2 RETURNING *;`,
-      [title, article_id]
-    );
-
-    if (!updatedArticleQuery.rows[0]) {
-      return Promise.reject({ status: 404, msg: 'Not found' });
-    }
-
-    return updatedArticleQuery.rows[0];
+    query += `title = $${queryIndex}, `;
+    queryParams.push(title);
+    queryIndex++;
   }
 
   if (topic) {
-    const updatedArticleQuery = await db.query(
-      `UPDATE articles SET topic = $1 WHERE article_id = $2 RETURNING *;`,
-      [topic, article_id]
-    );
-
-    if (!updatedArticleQuery.rows[0]) {
-      return Promise.reject({ status: 404, msg: 'Not found' });
-    }
-
-    return updatedArticleQuery.rows[0];
+    query += `topic = $${queryIndex}, `;
+    queryParams.push(topic);
+    queryIndex++;
   }
+
+  if (article_img_url) {
+    query += `article_img_url = $${queryIndex}, `;
+    queryParams.push(article_img_url);
+    queryIndex++;
+  }
+
+  if (article_body) {
+    query += `body = $${queryIndex}, `;
+    queryParams.push(article_body);
+    queryIndex++;
+  }
+
+  if (inc_votes) {
+    query += `votes = votes + $${queryIndex}, `;
+    queryParams.push(inc_votes);
+    queryIndex++;
+  }
+
+  query = query.slice(0, -2);
+
+  query += ` WHERE article_id = $${queryIndex} RETURNING *;`;
+  queryParams.push(article_id);
+
+  const updatedArticle = (await db.query(query, queryParams)).rows[0];
+
+  return updatedArticle;
 };
 
 exports.postArticle = async (author, title, body, topic, article_img_url) => {

@@ -371,6 +371,32 @@ describe('PATCH /api/articles/:article_id', () => {
       });
   });
 
+  test('status 200: responds with the updated article with all editable properties updated when specified', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({
+        title: 'Updated Title',
+        topic: 'cats',
+        article_body: 'Updated Body',
+        article_img_url:
+          'https://res.cloudinary.com/dafsdsmus/image/upload/v1746017270/pexels-deeanacreates-1646981_k5h0rs.jpg',
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          title: 'Updated Title',
+          topic: 'cats',
+          author: 'butter_bridge',
+          body: 'Updated Body',
+          created_at: '2020-07-09T20:11:00.000Z',
+          votes: 100,
+          article_img_url:
+            'https://res.cloudinary.com/dafsdsmus/image/upload/v1746017270/pexels-deeanacreates-1646981_k5h0rs.jpg',
+        });
+      });
+  });
+
   test('status 404: responds with a Not found error when given a valid but non-existent article id', () => {
     return request(app)
       .patch('/api/articles/50')
