@@ -214,17 +214,16 @@ exports.patchArticleById = async (
   }
 };
 
-exports.postArticle = async (
-  author,
-  title,
-  body,
-  topic,
-  article_img_url = 'https://i.ibb.co/60VdM4xv/Untitled-design.png'
-) => {
+exports.postArticle = async (author, title, body, topic, article_img_url) => {
   const userExistsQuery = await db.query(
     `SELECT * FROM users WHERE username = $1`,
     [author]
   );
+
+  if (!article_img_url || article_img_url.trim() === '') {
+    article_img_url =
+      'https://res.cloudinary.com/dafsdsmus/image/upload/v1746017270/pexels-deeanacreates-1646981_k5h0rs.jpg';
+  }
 
   const validTopics = (await fetchTopicsData()).map((topic) => {
     return topic.slug;

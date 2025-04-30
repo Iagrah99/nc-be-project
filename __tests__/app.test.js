@@ -864,7 +864,7 @@ describe('PATCH: /api/comments/:comment_id', () => {
   });
 });
 
-describe('POST: /api/articles', () => {
+describe('POST /api/articles', () => {
   test('status 201: responds with the newly added article post', () => {
     return request(app)
       .post('/api/articles')
@@ -901,6 +901,7 @@ describe('POST: /api/articles', () => {
         title: 'Article Test Title',
         body: 'Article test body',
         topic: 'paper',
+        article_img_url: '',
       })
       .expect(201)
       .then(({ body }) => {
@@ -913,7 +914,8 @@ describe('POST: /api/articles', () => {
           votes: 0,
           created_at: expect.any(String),
           comment_count: 0,
-          article_img_url: 'https://i.ibb.co/60VdM4xv/Untitled-design.png',
+          article_img_url:
+            'https://res.cloudinary.com/dafsdsmus/image/upload/v1746017270/pexels-deeanacreates-1646981_k5h0rs.jpg',
         });
       });
   });
