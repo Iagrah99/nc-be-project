@@ -1,4 +1,4 @@
-const { authenticateUser } = require('../models/auth.models');
+const { authenticateUser, endUserSession } = require('../models/auth.models');
 
 exports.loginUser = async (req, res, next) => {
   const { user } = req.body;
@@ -7,6 +7,18 @@ exports.loginUser = async (req, res, next) => {
   try {
     const loggedInUser = await authenticateUser(user);
     res.status(200).send({ user: loggedInUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.logoutUser = async (req, res, next) => {
+  const { user } = req.body;
+  console.log(user);
+
+  try {
+    await endUserSession(user);
+    res.status(200).send({ msg: 'You have been successfully logged out' });
   } catch (err) {
     next(err);
   }

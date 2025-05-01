@@ -1347,3 +1347,20 @@ describe('PATCH /api/auth/login', () => {
       });
   });
 });
+
+describe('PATCH /api/auth/logout', () => {
+  test('status 200: should update the is_logged_in property of the user object associated with the specified username', () => {
+    return request(app)
+      .patch('/api/auth/logout')
+      .send({
+        user: {
+          username: 'icellusedkars',
+        },
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('You have been successfully logged out');
+      });
+  });
+});
