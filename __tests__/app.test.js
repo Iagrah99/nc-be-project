@@ -490,6 +490,7 @@ describe('GET /api/users', () => {
             username: expect.any(String),
             name: expect.any(String),
             avatar_url: expect.any(String),
+            is_logged_in: expect.any(Boolean),
           });
         });
       });
@@ -802,6 +803,7 @@ describe('GET /api/users/:username', () => {
           avatar_url:
             'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
           name: 'sam',
+          is_logged_in: false,
         });
       });
   });
@@ -1304,6 +1306,44 @@ describe('GET /api/users/:username/articles', () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe('Not found');
+      });
+  });
+});
+
+describe('PATCH /api/auth/login', () => {
+  test('status 200: should respond with the user object that was created upon the user providing their correct login credentials', () => {
+    return request(app)
+      .patch('/api/auth/login')
+      .send({
+        user: {
+          username: 'icellusedkars',
+        },
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toMatchObject({
+          username: 'icellusedkars',
+          name: 'sam',
+          avatar_url:
+            'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
+          is_logged_in: true,
+        });
+      });
+  });
+
+  test('status 400: should respond with a Bad request error when the user provides incorrect login credentials', () => {
+    return request(app)
+      .patch('/api/auth/login')
+      .send({
+        user: {
+          username: 'unknownuser',
+        },
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad request: User does not exist');
       });
   });
 });
