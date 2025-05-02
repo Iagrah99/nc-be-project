@@ -793,16 +793,17 @@ describe('GET /api/articles (sorting queries)', () => {
 });
 
 describe('GET /api/users/:username', () => {
-  test('status 200: responds with a user object by the specified username and has the username, avatar_url and name properties. ', () => {
+  test('status 200: responds with a user object by the specified username and has the username, avatar_url and name properties.', () => {
     return request(app)
       .get('/api/users/icellusedkars')
       .expect(200)
       .then(({ body }) => {
         expect(body.user).toMatchObject({
           username: 'icellusedkars',
+          name: 'sam',
           avatar_url:
             'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
-          name: 'sam',
+
           is_logged_in: false,
         });
       });
@@ -1317,6 +1318,7 @@ describe('PATCH /api/auth/login', () => {
       .send({
         user: {
           username: 'icellusedkars',
+          password: 'kars123',
         },
       })
       .expect(200)
@@ -1332,18 +1334,35 @@ describe('PATCH /api/auth/login', () => {
       });
   });
 
-  test('status 400: should respond with a Bad request error when the user provides incorrect login credentials', () => {
+  test('status 400: should respond with a Bad request error when the user provides an incorrect username', () => {
     return request(app)
       .patch('/api/auth/login')
       .send({
         user: {
           username: 'unknownuser',
+          password: 'idk',
         },
       })
       .expect(400)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toBe('Bad request: User does not exist');
+        expect(msg).toBe('Bad request: Incorrect username.');
+      });
+  });
+
+  test('status 400: should respond with a Bad request error when the user provides an incorrect password', () => {
+    return request(app)
+      .patch('/api/auth/login')
+      .send({
+        user: {
+          username: 'icellusedkars',
+          password: 'idk123',
+        },
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe('Bad request: Incorrect password.');
       });
   });
 });

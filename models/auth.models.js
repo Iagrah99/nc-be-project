@@ -1,7 +1,7 @@
 const db = require('../db/connection');
-const { checkUserExists } = require('../utils/checkUserExists');
+const bcrypt = require('bcrypt');
 
-exports.authenticateUser = async ({ username }) => {
+exports.authenticateUser = async ({ username, password }) => {
   const fetchLoggedInUserDetails = (
     await db.query(
       'UPDATE users SET is_logged_in = $1 WHERE username = $2 RETURNING *;',
@@ -12,11 +12,16 @@ exports.authenticateUser = async ({ username }) => {
   if (!fetchLoggedInUserDetails) {
     return Promise.reject({
       status: 400,
-      msg: 'Bad request: User does not exist',
+      msg: 'Bad request: Incorrect username.',
     });
   }
 
-  console.log(fetchLoggedInUserDetails);
+  if (!(await bcrypt.compare(password, fetchLoggedInUserDetails.password))) {
+    return Promise.reject({
+      status: 400,
+      msg: 'Bad request: Incorrect password.',
+    });
+  }
 
   return fetchLoggedInUserDetails;
 };

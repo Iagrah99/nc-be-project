@@ -2,14 +2,16 @@ const db = require('../db/connection');
 const { checkUserExists } = require('../utils/checkUserExists');
 
 exports.fetchUsersData = async () => {
-  const usersData = await db.query('SELECT * FROM users');
+  const usersData = await db.query(
+    'SELECT username, name, avatar_url, is_logged_in FROM users;'
+  );
   return usersData.rows;
 };
 
 exports.fetchUserByUsername = async (username) => {
   const userData = await db.query(
-    `SELECT * FROM users
-     WHERE users.username = $1`,
+    `SELECT username, name, avatar_url, is_logged_in FROM users
+     WHERE users.username = $1;`,
     [username]
   );
 

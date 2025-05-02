@@ -2,7 +2,6 @@ const { authenticateUser, endUserSession } = require('../models/auth.models');
 
 exports.loginUser = async (req, res, next) => {
   const { user } = req.body;
-  console.log(user);
 
   try {
     const loggedInUser = await authenticateUser(user);
@@ -14,7 +13,6 @@ exports.loginUser = async (req, res, next) => {
 
 exports.logoutUser = async (req, res, next) => {
   const { user } = req.body;
-  console.log(user);
 
   try {
     await endUserSession(user);

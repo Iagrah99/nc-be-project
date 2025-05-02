@@ -1,42 +1,34 @@
 const format = require('pg-format');
 const db = require('../connection');
+const bcrypt = require('bcrypt');
 const {
   convertTimestampToDate,
   createRef,
   formatComments,
 } = require('./utils');
 
-const seed = ({ topicData, userData, articleData, commentData }) => {
-  return db
-    .query(`DROP TABLE IF EXISTS comments;`)
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS articles;`);
-    })
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS users;`);
-    })
-    .then(() => {
-      return db.query(`DROP TABLE IF EXISTS topics;`);
-    })
-    .then(() => {
-      const topicsTablePromise = db.query(`
+const seed = async ({ topicData, userData, articleData, commentData }) => {
+  await db.query(`DROP TABLE IF EXISTS comments;`);
+  await db.query(`DROP TABLE IF EXISTS articles;`);
+  await db.query(`DROP TABLE IF EXISTS users;`);
+  await db.query(`DROP TABLE IF EXISTS topics;`);
+
+  await db.query(`
       CREATE TABLE topics (
         slug VARCHAR PRIMARY KEY,
         description VARCHAR
       );`);
 
-      const usersTablePromise = db.query(`
+  await db.query(`
       CREATE TABLE users (
         username VARCHAR PRIMARY KEY,
         name VARCHAR NOT NULL,
+        password VARCHAR NOT NULL,
         avatar_url VARCHAR,
-        is_logged_in BOOL
+        is_logged_in BOOLEAN NOT NULL
       );`);
 
-      return Promise.all([topicsTablePromise, usersTablePromise]);
-    })
-    .then(() => {
-      return db.query(`
+  await db.query(`
       CREATE TABLE articles (
         article_id SERIAL PRIMARY KEY,
         title VARCHAR NOT NULL,
@@ -47,9 +39,8 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         votes INT DEFAULT 0 NOT NULL,
         article_img_url VARCHAR DEFAULT 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
       );`);
-    })
-    .then(() => {
-      return db.query(`
+
+  await db.query(`
       CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
         body VARCHAR NOT NULL,
@@ -58,64 +49,74 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         votes INT DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
       );`);
+
+  const insertTopicsQueryStr = format(
+    'INSERT INTO topics (slug, description) VALUES %L;',
+    topicData.map(({ slug, description }) => [slug, description])
+  );
+
+  const topicsPromise = db.query(insertTopicsQueryStr);
+
+  const hashedUserData = await Promise.all(
+    userData.map(async (user) => {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(user.password, salt);
+
+      return [
+        user.username,
+        user.name,
+        hashedPassword,
+        user.avatar_url,
+        user.is_logged_in,
+      ];
     })
-    .then(() => {
-      const insertTopicsQueryStr = format(
-        'INSERT INTO topics (slug, description) VALUES %L;',
-        topicData.map(({ slug, description }) => [slug, description])
-      );
-      const topicsPromise = db.query(insertTopicsQueryStr);
+  );
 
-      const insertUsersQueryStr = format(
-        'INSERT INTO users ( username, name, avatar_url, is_logged_in) VALUES %L;',
-        userData.map(({ username, name, avatar_url, is_logged_in }) => [
-          username,
-          name,
-          avatar_url,
-          is_logged_in,
-        ])
-      );
-      const usersPromise = db.query(insertUsersQueryStr);
+  const insertUsersQueryStr = format(
+    'INSERT INTO users (username, name, password, avatar_url, is_logged_in) VALUES %L;',
+    hashedUserData
+  );
+  const usersPromise = db.query(insertUsersQueryStr);
 
-      return Promise.all([topicsPromise, usersPromise]);
-    })
-    .then(() => {
-      const formattedArticleData = articleData.map(convertTimestampToDate);
-      const insertArticlesQueryStr = format(
-        'INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;',
-        formattedArticleData.map(
-          ({
-            title,
-            topic,
-            author,
-            body,
-            created_at,
-            votes = 0,
-            article_img_url,
-          }) => [title, topic, author, body, created_at, votes, article_img_url]
-        )
-      );
+  await Promise.all([topicsPromise, usersPromise]);
 
-      return db.query(insertArticlesQueryStr);
-    })
-    .then(({ rows: articleRows }) => {
-      const articleIdLookup = createRef(articleRows, 'title', 'article_id');
-      const formattedCommentData = formatComments(commentData, articleIdLookup);
+  const formattedArticleData = articleData.map(convertTimestampToDate);
 
-      const insertCommentsQueryStr = format(
-        'INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;',
-        formattedCommentData.map(
-          ({ body, author, article_id, votes = 0, created_at }) => [
-            body,
-            author,
-            article_id,
-            votes,
-            created_at,
-          ]
-        )
-      );
-      return db.query(insertCommentsQueryStr);
-    });
+  const insertArticlesQueryStr = format(
+    'INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;',
+    formattedArticleData.map(
+      ({
+        title,
+        topic,
+        author,
+        body,
+        created_at,
+        votes = 0,
+        article_img_url,
+      }) => [title, topic, author, body, created_at, votes, article_img_url]
+    )
+  );
+
+  const { rows: articleRows } = await db.query(insertArticlesQueryStr);
+
+  const articleIdLookup = createRef(articleRows, 'title', 'article_id');
+
+  const formattedCommentData = formatComments(commentData, articleIdLookup);
+
+  const insertCommentsQueryStr = format(
+    'INSERT INTO comments (body, author, article_id, votes, created_at) VALUES %L;',
+    formattedCommentData.map(
+      ({
+        body: body_1,
+        author: author_1,
+        article_id,
+        votes: votes_1 = 0,
+        created_at: created_at_1,
+      }) => [body_1, author_1, article_id, votes_1, created_at_1]
+    )
+  );
+
+  return await db.query(insertCommentsQueryStr);
 };
 
 module.exports = seed;
