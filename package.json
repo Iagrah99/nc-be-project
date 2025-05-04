@@ -1,7 +1,7 @@
 {
-  "name": "be-nc-news",
+  "name": "nc-news-api",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "nc-news-api",
   "main": "listen.js",
   "scripts": {
     "start": "node listen.js",
@@ -10,17 +10,9 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/northcoders/be-nc-news.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/northcoders/be-nc-news/issues"
-  },
-  "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "devDependencies": {
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",
