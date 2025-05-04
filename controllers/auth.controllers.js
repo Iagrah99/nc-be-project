@@ -15,8 +15,8 @@ exports.logoutUser = async (req, res, next) => {
   const { user } = req.body;
 
   try {
-    await endUserSession(user);
-    res.status(200).send({ msg: 'You have been successfully logged out' });
+    const sessionEnded = await endUserSession(user);
+    res.status(200).send(sessionEnded);
   } catch (err) {
     next(err);
   }

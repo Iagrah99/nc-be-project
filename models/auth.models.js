@@ -29,10 +29,10 @@ exports.authenticateUser = async ({ username, password }) => {
 exports.endUserSession = async ({ username }) => {
   const logoutSuccessfull = (
     await db.query(
-      'UPDATE users SET is_logged_in = $1 WHERE username = $2 RETURNING *;',
+      'UPDATE users SET is_logged_in = $1 WHERE username = $2 RETURNING is_logged_in;',
       [false, username]
     )
-  ).rowCount;
+  ).rows[0];
 
   return logoutSuccessfull;
 };

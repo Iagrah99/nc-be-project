@@ -1378,8 +1378,8 @@ describe('PATCH /api/auth/logout', () => {
       })
       .expect(200)
       .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe('You have been successfully logged out');
+        const { is_logged_in } = body;
+        expect(is_logged_in).toBe(false);
       });
   });
 });
