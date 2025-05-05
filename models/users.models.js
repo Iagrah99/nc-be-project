@@ -106,3 +106,14 @@ exports.fetchArticlesByUsername = async (
 
   return { userArticles: articlesData.rows, total_count };
 };
+
+exports.patchUserIsLoggedIn = async (username) => {
+  const refreshLoginStatusQuery = (
+    await db.query(
+      'UPDATE users SET is_logged_in = $1 WHERE username = $2 RETURNING is_logged_in;',
+      [false, username]
+    )
+  ).rows[0];
+
+  return refreshLoginStatusQuery;
+};

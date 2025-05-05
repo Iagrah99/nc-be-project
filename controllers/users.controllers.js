@@ -2,6 +2,7 @@ const {
   fetchUsersData,
   fetchUserByUsername,
   fetchArticlesByUsername,
+  patchUserIsLoggedIn,
 } = require('../models/users.models');
 
 exports.getUsers = async (req, res, next) => {
@@ -29,6 +30,17 @@ exports.getArticlesByUsername = async (req, res, next) => {
     const { userArticles } = await fetchArticlesByUsername(req, username);
 
     res.status(200).send({ articles: userArticles });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateUserIsLoggedIn = async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const { is_logged_in } = await patchUserIsLoggedIn(username);
+
+    res.status(200).send({ is_logged_in });
   } catch (err) {
     next(err);
   }
