@@ -111,7 +111,7 @@ exports.patchUserIsLoggedIn = async (username) => {
   const refreshLoginStatusQuery = (
     await db.query(
       'UPDATE users SET is_logged_in = $1 WHERE username = $2 RETURNING is_logged_in;',
-      [false, username]
+      [true, username]
     )
   ).rows[0];
 
