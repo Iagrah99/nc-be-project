@@ -25,7 +25,8 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
         name VARCHAR NOT NULL,
         password VARCHAR NOT NULL,
         avatar_url VARCHAR,
-        is_logged_in BOOLEAN NOT NULL
+        is_logged_in BOOLEAN NOT NULL,
+        date_joined DATE NOT NULL
       );`);
 
   await db.query(`
@@ -68,12 +69,13 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
         hashedPassword,
         user.avatar_url,
         user.is_logged_in,
+        user.date_joined,
       ];
     })
   );
 
   const insertUsersQueryStr = format(
-    'INSERT INTO users (username, name, password, avatar_url, is_logged_in) VALUES %L;',
+    'INSERT INTO users (username, name, password, avatar_url, is_logged_in, date_joined) VALUES %L;',
     hashedUserData
   );
   const usersPromise = db.query(insertUsersQueryStr);

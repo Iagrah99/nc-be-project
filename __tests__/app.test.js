@@ -491,6 +491,7 @@ describe('GET /api/users', () => {
             name: expect.any(String),
             avatar_url: expect.any(String),
             is_logged_in: expect.any(Boolean),
+            date_joined: expect.any(String),
           });
         });
       });
@@ -805,6 +806,7 @@ describe('GET /api/users/:username', () => {
             'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
 
           is_logged_in: false,
+          date_joined: '2019-12-15T00:00:00.000Z',
         });
       });
   });
@@ -1330,6 +1332,7 @@ describe('PATCH /api/auth/login', () => {
           avatar_url:
             'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4',
           is_logged_in: true,
+          date_joined: '2019-12-15T00:00:00.000Z',
         });
       });
   });

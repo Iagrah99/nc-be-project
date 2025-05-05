@@ -3,14 +3,14 @@ const { checkUserExists } = require('../utils/checkUserExists');
 
 exports.fetchUsersData = async () => {
   const usersData = await db.query(
-    'SELECT username, name, avatar_url, is_logged_in FROM users;'
+    'SELECT username, name, avatar_url, is_logged_in, date_joined FROM users;'
   );
   return usersData.rows;
 };
 
 exports.fetchUserByUsername = async (username) => {
   const userData = await db.query(
-    `SELECT username, name, avatar_url, is_logged_in FROM users
+    `SELECT username, name, avatar_url, is_logged_in, date_joined FROM users
      WHERE users.username = $1;`,
     [username]
   );
