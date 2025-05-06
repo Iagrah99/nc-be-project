@@ -1387,14 +1387,14 @@ describe('PATCH /api/auth/logout', () => {
   });
 });
 
-describe.only('PATCH /api/users/:username', () => {
+describe('PATCH /api/users/:username', () => {
   test('status 200: should update the is_logged_in property for the user that matches the specified username ', () => {
     return request(app)
       .patch('/api/users/icellusedkars')
       .expect(200)
       .then(({ body }) => {
         const { is_logged_in } = body;
-        expect(is_logged_in).toBe(false);
+        expect(is_logged_in).toBe(true);
       });
   });
 });
